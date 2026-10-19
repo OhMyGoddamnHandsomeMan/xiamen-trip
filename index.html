@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>廈門好吃驚</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a single-column trip booklet with two pages (行程 / 注意事項) — boarding passes up top, a sticky bar to switch pages and jump between days. Sea ink + bougainvillea (Xiamen's city flower) accent. */
+:root {
+  --bg: #F3F6F7;
+  --hero: #E3EEF0;
+  --surface: #FFFFFF;
+  --ink: #142A3B;
+  --muted: #55687A;
+  --line: #D6E0E5;
+  --sea: #1A6973;
+  --sea-soft: #DDEEEF;
+  --flower: #B3205F;
+  --flower-soft: #FBE6EF;
+  --on-flower: #FFFFFF;
+  --warn: #8A5200;
+  --warn-soft: #FFF1D6;
+  --shadow: rgba(20, 42, 59, 0.18);
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1820; --hero: #102630; --surface: #14232D; --ink: #E4ECF1; --muted: #98AAB8; --line: #263945;
+    --sea: #66C3C8; --sea-soft: #133539; --flower: #F27AB2; --flower-soft: #3A1A2A; --on-flower: #1B0B13;
+    --warn: #F2BC68; --warn-soft: #3A2C12; --shadow: rgba(0, 0, 0, 0.55); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1820; --hero: #102630; --surface: #14232D; --ink: #E4ECF1; --muted: #98AAB8; --line: #263945;
+  --sea: #66C3C8; --sea-soft: #133539; --flower: #F27AB2; --flower-soft: #3A1A2A; --on-flower: #1B0B13;
+  --warn: #F2BC68; --warn-soft: #3A2C12; --shadow: rgba(0, 0, 0, 0.55); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.wrap {
+  max-width: 780px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--sea); }
+:focus-visible { outline: 2px solid var(--flower); outline-offset: 2px; border-radius: 4px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Hero */
+.hero { background: var(--hero); border-bottom: 1px solid var(--line); }
+.hero .wrap { padding-block: 40px 28px; display: grid; gap: 20px; }
+.eyebrow { font-size: 0.82rem; letter-spacing: 0.08em; color: var(--sea); font-weight: 500; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.3rem, 8vw, 3.3rem); line-height: 1.15; }
+.lede { color: var(--muted); max-width: 36em; }
+
+.passes { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 640px) { .passes { grid-template-columns: 1fr 1fr; } }
+.pass { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-width: 0; }
+.pass-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px dashed var(--line); font-size: 0.85rem; flex-wrap: wrap; }
+.pass-kind { font-weight: 700; color: var(--flower); }
+.pass-top .mono { color: var(--muted); }
+.pass-route { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 14px 16px 6px; }
+.pt { display: grid; min-width: 0; }
+.pt.right { text-align: right; }
+.code { font-family: var(--font-mono); font-weight: 600; font-size: 1.85rem; line-height: 1.1; letter-spacing: 0.02em; }
+.place { font-size: 0.8rem; color: var(--muted); }
+.ptime { font-family: var(--font-mono); font-weight: 600; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.pass-mid { display: grid; justify-items: center; gap: 2px; color: var(--muted); font-size: 0.75rem; font-family: var(--font-mono); }
+.pass-mid::before { content: ""; width: 100%; min-width: 36px; border-top: 1.5px solid var(--sea); }
+.pass-foot { padding: 6px 16px 12px; font-size: 0.85rem; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pass-foot strong { color: var(--ink); font-weight: 500; }
+.pass-alert { color: var(--flower); font-weight: 500; }
+
+.stay { display: grid; gap: 4px; padding: 14px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.label { font-size: 0.78rem; letter-spacing: 0.08em; color: var(--sea); font-weight: 500; }
+.stay-info { color: var(--muted); font-size: 0.9rem; }
+
+/* Sticky bar: page switch + section chips */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 10px; padding-block: 10px; }
+.seg { flex: none; display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button {
+  font: inherit; font-size: 0.88rem; font-weight: 700; border: 0; background: transparent; color: var(--muted);
+  padding: 4px 12px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+}
+.seg button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.chips { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips a {
+  flex: none; text-decoration: none; color: var(--ink); font-size: 0.85rem; font-weight: 500;
+  padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); white-space: nowrap;
+}
+.chips a .mono { color: var(--muted); font-size: 0.76rem; margin-left: 4px; }
+.chips a.on { background: var(--sea); border-color: var(--sea); color: var(--bg); }
+.chips a.on .mono { color: var(--bg); }
+
+.view { display: grid; gap: 52px; padding-block: 36px 24px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 60px); }
+section { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 64px); display: grid; gap: 18px; min-width: 0; }
+.day-head { display: grid; gap: 2px; }
+.day-no { font-family: var(--font-mono); font-weight: 600; font-size: 0.85rem; color: var(--flower); letter-spacing: 0.04em; }
+.day-no span { color: var(--muted); font-weight: 500; margin-left: 6px; }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 5vw, 2rem); line-height: 1.3; }
+.intro { color: var(--muted); max-width: 40em; }
+
+/* Map links */
+.map {
+  display: inline-flex; align-items: center; gap: 3px; font-size: 0.76rem; font-weight: 500; line-height: 1.6;
+  color: var(--sea); text-decoration: none; border: 1px solid var(--sea); border-radius: 999px; padding: 0 9px; white-space: nowrap;
+}
+.map::after { content: "↗"; font-size: 0.7rem; }
+.map:hover { background: var(--sea-soft); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+/* Timeline */
+.timeline { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.timeline li { display: grid; grid-template-columns: 3.6rem minmax(0, 1fr); column-gap: 14px; padding: 14px 16px; }
+.timeline li + li { border-top: 1px solid var(--line); }
+.timeline time { font-family: var(--font-mono); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--sea); padding-top: 1px; }
+.timeline h3 { font-size: 1.02rem; font-weight: 700; line-height: 1.5; }
+.timeline p { color: var(--muted); font-size: 0.94rem; margin-top: 2px; }
+.tag { display: inline-block; font-size: 0.75rem; font-weight: 500; line-height: 1.6; padding: 1px 8px; border-radius: 999px; border: 1px solid transparent; }
+.tag.book { background: var(--flower-soft); color: var(--flower); }
+.tag.ticket { background: var(--sea-soft); color: var(--sea); }
+.tag.elder { background: var(--warn-soft); color: var(--warn); }
+
+.note { background: var(--sea-soft); border-radius: 12px; padding: 14px 16px; font-size: 0.94rem; display: grid; gap: 4px; }
+.note strong { color: var(--sea); }
+
+.subhead { font-size: 1.05rem; font-weight: 700; }
+
+/* Food */
+.food { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 640px) { .food { grid-template-columns: 1fr 1fr; } }
+.area { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0; }
+.area h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+.area ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.area li { display: grid; gap: 2px; }
+.area .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.area li b { font-weight: 700; }
+.area li > span { color: var(--muted); font-size: 0.9rem; }
+
+/* Notes page */
+.block { display: grid; gap: 12px; }
+.checklist { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.checklist li + li { border-top: 1px solid var(--line); }
+.checklist label { display: grid; grid-template-columns: 22px 6.4rem minmax(0, 1fr); gap: 10px; align-items: start; padding: 12px 16px; cursor: pointer; }
+.checklist input { width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--sea); }
+.checklist .when { font-family: var(--font-mono); font-weight: 600; font-size: 0.86rem; color: var(--flower); padding-top: 2px; }
+.checklist .what { font-size: 0.95rem; }
+.checklist input:checked ~ .what { color: var(--muted); text-decoration: line-through; }
+@media (max-width: 440px) {
+  .checklist label { grid-template-columns: 22px minmax(0, 1fr); }
+  .checklist .when { grid-column: 2; padding-top: 0; }
+  .checklist .what { grid-column: 2; }
+}
+.hint { font-size: 0.82rem; color: var(--muted); }
+
+.tickets { display: grid; gap: 10px; }
+.ticket { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; min-width: 0; }
+.ticket-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ticket-head b { font-size: 1rem; }
+.price { font-family: var(--font-mono); font-weight: 600; color: var(--sea); font-size: 0.9rem; }
+.ticket dl { margin: 0; display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); gap: 2px 10px; font-size: 0.92rem; }
+.ticket dt { color: var(--muted); }
+.ticket dd { margin: 0; }
+.ticket.free { background: transparent; border-style: dashed; }
+.ticket.free p { color: var(--muted); font-size: 0.92rem; }
+
+.places { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.places li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 12px 16px; }
+.places li + li { border-top: 1px solid var(--line); }
+.places b { font-size: 0.95rem; }
+.places code { font-family: var(--font-body); font-size: 0.95rem; user-select: all; overflow-wrap: anywhere; }
+.places .acts { display: flex; gap: 6px; }
+@media (max-width: 520px) {
+  .places li { grid-template-columns: minmax(0, 1fr) auto; }
+  .places b { grid-column: 1 / -1; }
+}
+
+.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 10px; }
+.steps li::marker { font-family: var(--font-mono); font-weight: 600; color: var(--flower); }
+.steps p { color: var(--muted); font-size: 0.93rem; }
+.phone { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-block: 4px; }
+.phone code { font-family: var(--font-mono); font-weight: 600; font-size: 1rem; background: var(--sea-soft); color: var(--ink); padding: 2px 10px; border-radius: 6px; user-select: all; }
+.copy { font: inherit; font-size: 0.78rem; line-height: 1.6; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.copy:hover { border-color: var(--sea); }
+
+.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; font-size: 0.95rem; }
+.plain li::marker { color: var(--sea); }
+.apps { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 640px) { .apps { grid-template-columns: 1fr 1fr; } }
+.app { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; min-width: 0; align-content: start; }
+.app b { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.app p { color: var(--muted); font-size: 0.92rem; }
+.back { justify-self: start; }
+
+.overview { display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px 6px; }
+.overview a { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: 10px; padding-block: 8px; color: var(--ink); text-decoration: none; border-top: 1px solid var(--line); }
+.overview .label + a { border-top: 0; }
+.overview a:hover span:last-child { color: var(--sea); }
+.overview .mono { font-weight: 600; font-size: 0.88rem; color: var(--flower); padding-top: 1px; }
+@media (min-width: 520px) { .overview a { grid-template-columns: 9.5rem minmax(0, 1fr); } }
+
+footer .wrap { padding-block: 16px 40px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); }
+
+/* Itinerary board (drag to reorder) */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.board-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.board-status { margin-right: auto; font-size: 0.85rem; color: var(--muted); }
+.board-status.on { color: var(--flower); font-weight: 700; }
+.tool {
+  font: inherit; font-size: 0.85rem; font-weight: 500; line-height: 1.6; padding: 4px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap;
+}
+.tool:hover:not(:disabled) { border-color: var(--sea); }
+.tool:disabled { opacity: 0.45; cursor: default; }
+.tool.armed { border-color: var(--flower); color: var(--flower); }
+.board-text {
+  width: 100%; min-height: 12rem; font: inherit; font-size: 0.88rem; line-height: 1.6; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--sea); border-radius: 12px; padding: 10px 12px; resize: vertical;
+}
+.board { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 640px) { .board { grid-template-columns: 1fr 1fr; } }
+.bday { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 10px 10px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.bday-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding-inline: 4px; }
+.bday-head .mono { font-weight: 600; font-size: 0.85rem; color: var(--flower); }
+.bday-head .date { font-size: 0.85rem; color: var(--muted); }
+.bday-head .ttl { flex-basis: 100%; font-size: 1rem; line-height: 1.45; }
+.bday-warn { font-size: 0.72rem; font-weight: 500; line-height: 1.6; padding: 0 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); }
+.blist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; min-height: 48px; border-radius: 10px; }
+.blist:empty { border: 1.5px dashed var(--line); }
+.blist:empty::before { content: "可以把行程拖到這裡"; display: grid; place-items: center; min-height: 48px; font-size: 0.82rem; color: var(--muted); }
+.card {
+  display: grid; grid-template-columns: 30px auto minmax(0, 1fr); align-items: center; column-gap: 4px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px 10px 4px 2px;
+}
+.card.fixed { background: transparent; border-style: dashed; }
+.grip {
+  width: 30px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 8px; padding: 0;
+  background: transparent; color: var(--muted); cursor: grab; touch-action: none;
+}
+.grip::before { content: ""; width: 10px; height: 15px; background: radial-gradient(circle at 2.5px 2.5px, currentColor 1.5px, transparent 1.8px) 0 0 / 5px 5px; }
+.grip:hover, .grip:focus-visible { background: var(--sea-soft); color: var(--sea); }
+.fixed-tag { justify-self: center; font-size: 0.68rem; color: var(--muted); }
+.btime {
+  font: inherit; font-family: var(--font-mono); font-weight: 600; font-size: 0.9rem; font-variant-numeric: tabular-nums;
+  color: var(--sea); background: transparent; border: 1px dashed transparent; border-radius: 6px;
+  padding: 1px 5px; min-width: 3.4rem; text-align: left; cursor: pointer;
+}
+button.btime:hover { border-color: var(--sea); }
+span.btime { cursor: default; color: var(--muted); }
+.btime.off { color: var(--warn); border-color: var(--warn); }
+.tin { font: inherit; font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink); background: var(--surface); border: 1px solid var(--sea); border-radius: 6px; padding: 1px 4px; width: 6.6rem; }
+.btitle { font-size: 0.92rem; line-height: 1.45; padding-block: 5px; min-width: 0; overflow-wrap: anywhere; }
+.card.is-ghost { opacity: 0.4; border-style: dashed; border-color: var(--sea); }
+.card.is-drag, .card.sortable-fallback { background: var(--surface); box-shadow: 0 10px 24px var(--shadow); opacity: 1 !important; }
+.timeline:empty { display: none; }
+
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body::before, .bar, .copy, .back, #n-check .hint { display: none !important; }
+  .view[hidden] { display: grid !important; }
+  #notes, #day1, #day2, #day3, #day4, #food { break-before: page; }
+  .view { padding-block: 0; }
+  #plan { gap: 0; }
+  #notes { gap: 28px; }
+  .overview { display: grid !important; }
+  .screen-only { display: none !important; }
+  body { line-height: 1.6; }
+  .hero .wrap { padding-block: 8px 0; }
+  .timeline li { padding: 9px 16px; }
+  .meta { margin-top: 5px; }
+  section { gap: 12px; }
+  .day-head, .subhead { break-after: avoid; }
+  .pass, .stay, .timeline li, .note, .area, .ticket, .places li, .app, .checklist li, .steps li { break-inside: avoid; }
+}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">2026 · 12/11（五）– 12/14（一）· 四天三夜 · 7 人</p>
+    <h1>廈門好吃驚</h1>
+    <p class="lede">最終版行程<span class="screen-only">，分成「行程」和「注意事項」兩頁</span>。交通都用打車，7 個人叫兩台車。地點旁邊的小按鈕可以直接打開高德地圖。</p>
+
+    <div class="passes">
+      <article class="pass">
+        <div class="pass-top"><span class="pass-kind">去程</span><span class="mono">MF888 · 廈門航空</span></div>
+        <div class="pass-route">
+          <div class="pt"><span class="code">TPE</span><span class="place">桃園 T2</span><span class="ptime">11:10</span></div>
+          <div class="pass-mid">1h50m</div>
+          <div class="pt right"><span class="code">XMN</span><span class="place">廈門高崎 T3</span><span class="ptime">13:00</span></div>
+        </div>
+        <div class="pass-foot"><strong>12/11（五）</strong><span>波音 737-800</span></div>
+      </article>
+      <article class="pass">
+        <div class="pass-top"><span class="pass-kind">回程</span><span class="mono">MF881 · 廈門航空</span></div>
+        <div class="pass-route">
+          <div class="pt"><span class="code">XMN</span><span class="place">廈門高崎 T3</span><span class="ptime">17:15</span></div>
+          <div class="pass-mid">1h30m</div>
+          <div class="pt right"><span class="code">TSA</span><span class="place">台北松山 T1</span><span class="ptime">18:45</span></div>
+        </div>
+        <div class="pass-foot"><strong>12/14（一）</strong><span class="pass-alert">回程降落松山機場</span></div>
+      </article>
+    </div>
+
+    <div class="stay">
+      <span class="label">住宿 · 三晚</span>
+      <strong>VISHAN·維尚設計師潮宿（廈門中山路步行街店）</strong>
+      <span class="stay-info">中山路 76–132 號 3 樓 · 不含早餐 · 可免費寄放行李</span>
+      <div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E7%BB%B4%E5%B0%9A%E8%AE%BE%E8%AE%A1%E5%B8%88%E6%BD%AE%E5%AE%BF%20%E4%B8%AD%E5%B1%B1%E8%B7%AF%E6%AD%A5%E8%A1%8C%E8%A1%97%E5%BA%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">飯店</a><a class="map" href="https://uri.amap.com/search?keyword=%E4%B8%AD%E5%B1%B1%E8%B7%AF%E6%AD%A5%E8%A1%8C%E8%A1%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">中山路步行街</a></div>
+    </div>
+
+    <nav class="overview" aria-label="四天一覽">
+      <span class="label">四天一覽</span>
+      <a href="#board"><span class="mono">行程總覽</span><span>拖曳調整每天的順序，也可以換到別天</span></a>
+      <a href="#day1"><span class="mono">DAY 1 · 12/11</span><span>抵達・八市・中山路</span></a>
+      <a href="#day2"><span class="mono">DAY 2 · 12/12</span><span>南普陀・海會樓・植物園・SM＋海底撈</span></a>
+      <a href="#day3"><span class="mono">DAY 3 · 12/13</span><span>鼓浪嶼一整天</span></a>
+      <a href="#day4"><span class="mono">DAY 4 · 12/14</span><span>沙坡尾・演武大橋・K11・回台灣</span></a>
+      <a href="#food"><span class="mono">吃什麼</span><span>中山路、鼓浪嶼、南普陀、SM・K11 的美食</span></a>
+      <a href="#notes"><span class="mono">注意事項</span><span>買票預約、叫車地點、海底撈訂位、App 與付款</span></a>
+    </nav>
+  </div>
+</header>
+
+<nav class="bar" aria-label="頁面切換">
+  <div class="wrap">
+    <div class="seg" role="tablist">
+      <button type="button" role="tab" id="tab-plan" data-view="plan" aria-selected="true" aria-controls="plan">行程</button>
+      <button type="button" role="tab" id="tab-notes" data-view="notes" aria-selected="false" aria-controls="notes">注意事項</button>
+    </div>
+    <div class="chips" id="chips-plan">
+      <a href="#board">總覽</a>
+      <a href="#day1">Day 1<span class="mono">12/11</span></a>
+      <a href="#day2">Day 2<span class="mono">12/12</span></a>
+      <a href="#day3">Day 3<span class="mono">12/13</span></a>
+      <a href="#day4">Day 4<span class="mono">12/14</span></a>
+      <a href="#food">吃什麼</a>
+    </div>
+    <div class="chips" id="chips-notes" hidden>
+      <a href="#n-check">出發前</a>
+      <a href="#n-tickets">買票預約</a>
+      <a href="#n-places">叫車地點</a>
+      <a href="#n-hdl">海底撈訂位</a>
+      <a href="#n-apps">App 付款</a>
+      <a href="#n-other">其他提醒</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ 行程 ============ -->
+<main class="wrap view" id="plan" data-view="plan" role="tabpanel" aria-labelledby="tab-plan">
+
+  <section id="board" class="screen-only">
+    <div class="day-head">
+      <p class="day-no">OVERVIEW</p>
+      <h2>行程總覽</h2>
+      <p class="intro">按住每一項左邊的點點拖曳，可以調整順序，也可以拖到別天。點時間可以修改。下面每天的詳細行程會跟著變。</p>
+    </div>
+    <div class="board-tools">
+      <span class="board-status" id="board-status">原本的行程</span>
+      <button type="button" class="tool" id="board-copy">複製行程文字</button>
+      <button type="button" class="tool" id="board-reset" disabled>還原成原本的行程</button>
+    </div>
+    <textarea class="board-text" id="board-text" readonly hidden aria-label="行程文字"></textarea>
+    <div class="board" id="board-days"></div>
+    <p class="hint" id="board-hint">調整只會存在你自己的手機或電腦上，不會同步給其他人。想讓大家看到，按「複製行程文字」貼到 LINE 群組。航班和機場報到是固定的，不能移動。</p>
+    <p class="sr-only" id="board-live" aria-live="polite"></p>
+  </section>
+
+  <section id="day1">
+    <div class="day-head">
+      <p class="day-no">DAY 1<span>12/11（五）</span></p>
+      <h2>抵達・八市・中山路</h2>
+    </div>
+    <ol class="timeline">
+      <li data-fixed><time>11:10</time><div><h3>桃園機場 T2 起飛</h3><p>MF888，飛行約 1 小時 50 分。</p></div></li>
+      <li data-fixed><time>13:00</time><div><h3>抵達廈門高崎 T3</h3><p>入境、領行李，大約 1 小時。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E9%AB%98%E5%B4%8E%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BAT3%E8%88%AA%E7%AB%99%E6%A5%BC&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">高崎機場 T3</a></div></div></li>
+      <li><time>14:00</time><div><h3>打車到飯店</h3><p>約 30–40 分鐘，叫兩台車。中山路是步行街，先問飯店車子停哪裡下車。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E7%BB%B4%E5%B0%9A%E8%AE%BE%E8%AE%A1%E5%B8%88%E6%BD%AE%E5%AE%BF%20%E4%B8%AD%E5%B1%B1%E8%B7%AF%E6%AD%A5%E8%A1%8C%E8%A1%97%E5%BA%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">飯店</a></div></div></li>
+      <li><time>14:45</time><div><h3>Check-in，稍微休息</h3><p>房間在 3 樓，記得問有沒有電梯。</p></div></li>
+      <li><time>15:30</time><div><h3>八市（第八市場）</h3><p>從飯店走路約 10–15 分鐘。下午部分攤位會收，以逛市場、吃小吃為主：海蠣煎、炸棗、花生湯。想吃海鮮可以在市場買，再請旁邊的代客加工店料理。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E7%AC%AC%E5%85%AB%E5%B8%82%E5%9C%BA&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">八市</a></div></div></li>
+      <li><time>17:00</time><div><h3>中山路步行街吃小吃、隨意逛逛</h3><p>晚上可以看中山路的騎樓夜景。飯店就在步行街上，累了隨時回去。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E4%B8%AD%E5%B1%B1%E8%B7%AF%E6%AD%A5%E8%A1%8C%E8%A1%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">中山路步行街</a><a class="map" href="https://uri.amap.com/search?keyword=%E9%BB%84%E5%88%99%E5%92%8C%E8%8A%B1%E7%94%9F%E6%B1%A4%20%E4%B8%AD%E5%B1%B1%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">黃則和花生湯</a><a class="map" href="https://uri.amap.com/search?keyword=%E5%90%B4%E5%86%8D%E6%B7%BB%E5%B0%8F%E5%90%83%E5%BA%97%20%E5%A4%A7%E5%90%8C%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">吳再添小吃店</a></div></div></li>
+    </ol>
+  </section>
+
+  <section id="day2">
+    <div class="day-head">
+      <p class="day-no">DAY 2<span>12/12（六）</span></p>
+      <h2>南普陀・海會樓・植物園・SM</h2>
+    </div>
+    <ol class="timeline">
+      <li><time>9:00</time><div><h3>打車到南普陀寺</h3><p>約 10–15 分鐘。</p></div></li>
+      <li><time>9:15</time><div><h3>南普陀寺</h3><p>天王殿、大雄寶殿、大悲殿、放生池。只逛平地，不爬後山五老峰。</p><div class="meta"><span class="tag book">60 歲以下要預約</span><span class="tag elder">60 歲以上帶台胞證直接進</span><a class="map" href="https://uri.amap.com/search?keyword=%E5%8D%97%E6%99%AE%E9%99%80%E5%AF%BA&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">南普陀寺</a></div></div></li>
+      <li><time>11:00</time><div><h3>海會樓素齋午餐</h3><p>寺內的素菜館，以單點為主。週六人多，11 點前後入座。可以順便買南普陀素餅當伴手禮。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8D%97%E6%99%AE%E9%99%80%E5%AF%BA%E6%B5%B7%E4%BC%9A%E6%A5%BC&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">海會樓</a></div></div></li>
+      <li><time>12:30</time><div><h3>打車到植物園南門</h3><p>約 10 分鐘。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E5%9B%AD%E6%9E%97%E6%A4%8D%E7%89%A9%E5%9B%AD%E5%8D%97%E9%97%A8&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">植物園南門</a></div></div></li>
+      <li><time>12:45</time><div><h3>植物園慢慢逛</h3><p>南門扶梯上山頂觀景台 → 搭景交車到多肉區 → 走約 400 公尺到雨林世界（14:00–16:00 有噴霧）→ 從西門出去。景交車可以隨上隨下，長輩累了就坐車。</p><div class="meta"><span class="tag ticket">現場買票</span><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E5%9B%AD%E6%9E%97%E6%A4%8D%E7%89%A9%E5%9B%AD%E9%9B%A8%E6%9E%97%E4%B8%96%E7%95%8C&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">雨林世界</a><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E5%9B%AD%E6%9E%97%E6%A4%8D%E7%89%A9%E5%9B%AD%E8%A5%BF%E9%97%A8&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">植物園西門</a></div></div></li>
+      <li><time>16:00</time><div><h3>打車到 SM 城市廣場</h3><p>約 15–20 分鐘。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=SM%E5%9F%8E%E5%B8%82%E5%B9%BF%E5%9C%BA%20%E5%98%89%E7%A6%BE%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">SM 城市廣場</a></div></div></li>
+      <li><time>16:30</time><div><h3>SM 逛街</h3><p>共 5 層，B1 是沃爾瑪超市。如果沒訂到海底撈，一到先上 5 樓取號再去逛。</p></div></li>
+      <li><time>18:00</time><div><h3>海底撈（SM 一期 5 樓）</h3><p>週六晚上人很多，請先訂位。<a href="#n-hdl">看訂位方法</a></p><div class="meta"><span class="tag book">要訂位</span><a class="map" href="https://uri.amap.com/search?keyword=%E6%B5%B7%E5%BA%95%E6%8D%9E%E7%81%AB%E9%94%85%20SM%E5%9F%8E%E5%B8%82%E5%B9%BF%E5%9C%BA%E5%BA%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">海底撈 SM 店</a></div></div></li>
+      <li><time>20:00</time><div><h3>打車回飯店</h3><p>約 20–25 分鐘。</p></div></li>
+    </ol>
+    <div class="note"><strong>長輩提醒</strong><p>這天比較長，中間沒有回飯店休息。植物園多搭扶梯和景交車，海會樓可以多坐一下；長輩累了可以先到海底撈的等位區坐著，那裡有座位和小點心。</p></div>
+  </section>
+
+  <section id="day3">
+    <div class="day-head">
+      <p class="day-no">DAY 3<span>12/13（日）</span></p>
+      <h2>鼓浪嶼一整天</h2>
+    </div>
+    <ol class="timeline">
+      <li><time>8:45</time><div><h3>打車到東渡郵輪中心廈鼓碼頭</h3><p>約 15 分鐘。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E5%9B%BD%E9%99%85%E9%82%AE%E8%BD%AE%E4%B8%AD%E5%BF%83%E5%8E%A6%E9%BC%93%E7%A0%81%E5%A4%B4&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">廈鼓碼頭</a></div></div></li>
+      <li><time>9:30</time><div><h3>搭船到三丘田碼頭</h3><p>約 20 分鐘。三丘田離最美轉角和龍頭路最近。</p><div class="meta"><span class="tag ticket">船票要事先買</span><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E4%B8%89%E4%B8%98%E7%94%B0%E7%A0%81%E5%A4%B4&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">三丘田碼頭</a></div></div></li>
+      <li><time>10:00</time><div><h3>最美轉角</h3><p>在鼓新路和三明路口，出碼頭往上坡走 3–5 分鐘。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E6%9C%80%E7%BE%8E%E8%BD%AC%E8%A7%92&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">最美轉角</a></div></div></li>
+      <li><time>10:20</time><div><h3>美國領事館舊址</h3><p>在三明路上，就在附近。以看外觀、拍照為主。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E7%BE%8E%E5%9B%BD%E9%A2%86%E4%BA%8B%E9%A6%86%E6%97%A7%E5%9D%80&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">美國領事館舊址</a></div></div></li>
+      <li><time>11:00</time><div><h3>龍頭路小吃當午餐</h3><p>蛋滿灌（龍頭路 175 號，就是「灌蛋」，約 18 元）、土筍凍、沙茶麵、林氏魚丸、葉氏麻糍。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E9%BE%99%E5%A4%B4%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">龍頭路</a><a class="map" href="https://uri.amap.com/search?keyword=%E8%9B%8B%E6%BB%A1%E7%81%8C%20%E9%BC%93%E6%B5%AA%E5%B1%BF%E9%BE%99%E5%A4%B4%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">蛋滿灌</a></div></div></li>
+      <li><time>13:00</time><div><h3>菽莊花園＋鋼琴博物館</h3><p>一張票可以進兩館。園內的四十四橋有階梯，長輩走到看得到海的地方就好。</p><div class="meta"><span class="tag ticket">現場買票</span><a class="map" href="https://uri.amap.com/search?keyword=%E8%8F%BD%E5%BA%84%E8%8A%B1%E5%9B%AD&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">菽莊花園</a></div></div></li>
+      <li><time>15:00</time><div><h3>港仔後海灘喝下午茶</h3><p>找間海邊的店坐著休息。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E6%B8%AF%E4%BB%94%E5%90%8E%E6%B5%B7%E6%BB%A8%E6%B5%B4%E5%9C%BA&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">港仔後海灘</a></div></div></li>
+      <li><time>17:30</time><div><h3>看夕陽</h3><p>12 月中大約 17:30 日落。</p></div></li>
+      <li><time>18:00</time><div><h3>在島上吃晚餐</h3></div></li>
+      <li><time>19:30</time><div><h3>搭船回廈門，打車回飯店</h3><p>回程的碼頭和時間，以買票時選的班次為準。</p></div></li>
+    </ol>
+    <div class="note"><strong>長輩提醒</strong><p>12/13 是週日，島上人多。鼓浪嶼沒有車，全程走路，有上下坡，不建議長輩爬日光岩。建議帶拐杖椅或折疊輪椅，下午茶和晚餐多坐一下。</p></div>
+  </section>
+
+  <section id="day4">
+    <div class="day-head">
+      <p class="day-no">DAY 4<span>12/14（一）</span></p>
+      <h2>沙坡尾・演武大橋・K11・回台灣</h2>
+    </div>
+    <ol class="timeline">
+      <li><time>9:00</time><div><h3>退房，行李先寄放在飯店</h3><p>飯店可以免費寄放行李，中午回來再拿。</p></div></li>
+      <li><time>9:10</time><div><h3>打車到沙坡尾</h3><p>約 10 分鐘。逛避風塢、藝術西區，找間咖啡廳坐一下、吃早午餐。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E6%B2%99%E5%9D%A1%E5%B0%BE&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">沙坡尾</a></div></div></li>
+      <li><time>10:15</time><div><h3>演武大橋觀景平台</h3><p>離沙坡尾不遠，在這裡看海。長輩走不動可以打車過去。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E6%BC%94%E6%AD%A6%E5%A4%A7%E6%A1%A5%E8%A7%82%E6%99%AF%E5%B9%B3%E5%8F%B0&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">演武大橋觀景平台</a></div></div></li>
+      <li><time>11:00</time><div><h3>打車回飯店拿行李</h3><p>約 10–15 分鐘。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E7%BB%B4%E5%B0%9A%E8%AE%BE%E8%AE%A1%E5%B8%88%E6%BD%AE%E5%AE%BF%20%E4%B8%AD%E5%B1%B1%E8%B7%AF%E6%AD%A5%E8%A1%8C%E8%A1%97%E5%BA%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">飯店</a></div></div></li>
+      <li><time>11:20</time><div><h3>叫兩台車到 K11 Select</h3><p>約 35 分鐘。行李多的話，叫車時可以選 6 人座或空間大一點的車型。</p></div></li>
+      <li><time>12:00</time><div><h3>K11 Select 午餐、逛街</h3><p>先到服務台問能不能寄放行李，不行就輪流顧行李。有 LINE FRIENDS 熊大 15 週年快閃（9/22 開幕，結束日期還沒確認，出發前再查）。旁邊的五緣灣濕地公園步道很平，長輩也好走。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8K11%20Select&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">K11 Select</a><a class="map" href="https://uri.amap.com/search?keyword=%E4%BA%94%E7%BC%98%E6%B9%BE%E6%B9%BF%E5%9C%B0%E5%85%AC%E5%9B%AD&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">五緣灣濕地公園</a></div></div></li>
+      <li><time>14:30</time><div><h3>叫兩台車到機場</h3><p>約 20 分鐘。最晚 14:45 一定要出發。</p><div class="meta"><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E9%AB%98%E5%B4%8E%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BAT3%E8%88%AA%E7%AB%99%E6%A5%BC&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">高崎機場 T3</a></div></div></li>
+      <li data-fixed><time>15:15</time><div><h3>抵達高崎 T3 報到</h3><p>兩岸航班建議起飛前 2 小時到。</p></div></li>
+      <li data-fixed><time>17:15</time><div><h3>MF881 起飛，18:45 抵達台北松山 T1</h3><p>接機的家人請到松山機場，不是桃園。</p></div></li>
+    </ol>
+  </section>
+
+  <section id="food">
+    <div class="day-head">
+      <p class="day-no">FOOD</p>
+      <h2>吃什麼</h2>
+    </div>
+    <div class="food">
+      <div class="area">
+        <h3>中山路・八市</h3>
+        <ul>
+          <li><div class="row"><b>黃則和花生湯</b><a class="map" href="https://uri.amap.com/search?keyword=%E9%BB%84%E5%88%99%E5%92%8C%E8%8A%B1%E7%94%9F%E6%B1%A4%20%E4%B8%AD%E5%B1%B1%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>花生湯、燒肉粽、沙茶麵一次吃到，早上就有開，可以當早餐</span></li>
+          <li><div class="row"><b>吳再添小吃店（大同路）</b><a class="map" href="https://uri.amap.com/search?keyword=%E5%90%B4%E5%86%8D%E6%B7%BB%E5%B0%8F%E5%90%83%E5%BA%97%20%E5%A4%A7%E5%90%8C%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>蝦麵、土筍凍、薄餅</span></li>
+          <li><div class="row"><b>1980 燒肉粽</b><a class="map" href="https://uri.amap.com/search?keyword=1980%E7%83%A7%E8%82%89%E7%B2%BD%20%E4%B8%AD%E5%B1%B1%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>邊走邊吃</span></li>
+          <li><div class="row"><b>葉氏麻糍</b><a class="map" href="https://uri.amap.com/search?keyword=%E5%8F%B6%E6%B0%8F%E9%BA%BB%E7%B3%8D%20%E4%B8%AD%E5%B1%B1%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>邊走邊吃</span></li>
+          <li><div class="row"><b>八市海鮮代客加工</b><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E7%AC%AC%E5%85%AB%E5%B8%82%E5%9C%BA&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>在市場買海鮮，請旁邊的店料理</span></li>
+          <li><div class="row"><b>臨家閩南菜</b><a class="map" href="https://uri.amap.com/search?keyword=%E4%B8%B4%E5%AE%B6%E9%97%BD%E5%8D%97%E8%8F%9C%20%E4%B8%AD%E5%B1%B1%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>7 個人想坐下來吃正餐時，先訂位</span></li>
+          <li><div class="row"><b>小眼鏡大排檔</b><a class="map" href="https://uri.amap.com/search?keyword=%E5%B0%8F%E7%9C%BC%E9%95%9C%E5%A4%A7%E6%8E%92%E6%A1%A3&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>海鮮熱炒，人多先訂位</span></li>
+          <li><div class="row"><b>烏糖沙茶麵、月華沙茶麵</b><a class="map" href="https://uri.amap.com/search?keyword=%E4%B9%8C%E7%B3%96%E6%B2%99%E8%8C%B6%E9%9D%A2&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">烏糖</a><a class="map" href="https://uri.amap.com/search?keyword=%E6%9C%88%E5%8D%8E%E6%B2%99%E8%8C%B6%E9%9D%A2&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">月華</a></div><span>廈門人常推的沙茶麵老店，有好幾家分店</span></li>
+        </ul>
+      </div>
+      <div class="area">
+        <h3>鼓浪嶼龍頭路</h3>
+        <ul>
+          <li><div class="row"><b>蛋滿灌（龍頭路 175 號）</b><a class="map" href="https://uri.amap.com/search?keyword=%E8%9B%8B%E6%BB%A1%E7%81%8C%20%E9%BC%93%E6%B5%AA%E5%B1%BF%E9%BE%99%E5%A4%B4%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>就是「灌蛋」：福建非遺的蛋包肉，約 18 元</span></li>
+          <li><div class="row"><b>土筍凍</b><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E9%BE%99%E5%A4%B4%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">龍頭路</a></div><span>冷食，冬天長輩吃一點就好</span></li>
+          <li><div class="row"><b>林氏魚丸</b><a class="map" href="https://uri.amap.com/search?keyword=%E6%9E%97%E6%B0%8F%E9%B1%BC%E4%B8%B8%20%E9%BC%93%E6%B5%AA%E5%B1%BF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>魚丸湯，熱熱的適合長輩</span></li>
+          <li><div class="row"><b>沙茶麵、葉氏麻糍</b><a class="map" href="https://uri.amap.com/search?keyword=%E9%BC%93%E6%B5%AA%E5%B1%BF%E9%BE%99%E5%A4%B4%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">龍頭路</a></div><span>龍頭路一路都有</span></li>
+          <li><div class="row"><b>黃勝記肉鬆</b><a class="map" href="https://uri.amap.com/search?keyword=%E9%BB%84%E8%83%9C%E8%AE%B0%20%E9%BC%93%E6%B5%AA%E5%B1%BF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>伴手禮</span></li>
+        </ul>
+      </div>
+      <div class="area">
+        <h3>南普陀</h3>
+        <ul>
+          <li><div class="row"><b>海會樓素齋</b><a class="map" href="https://uri.amap.com/search?keyword=%E5%8D%97%E6%99%AE%E9%99%80%E5%AF%BA%E6%B5%B7%E4%BC%9A%E6%A5%BC&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>寺內的素菜館，單點為主</span></li>
+          <li><div class="row"><b>南普陀素餅</b></div><span>伴手禮，寺內就買得到</span></li>
+        </ul>
+      </div>
+      <div class="area">
+        <h3>SM・K11</h3>
+        <ul>
+          <li><div class="row"><b>海底撈（SM 一期 5 樓）</b><a class="map" href="https://uri.amap.com/search?keyword=%E6%B5%B7%E5%BA%95%E6%8D%9E%E7%81%AB%E9%94%85%20SM%E5%9F%8E%E5%B8%82%E5%B9%BF%E5%9C%BA%E5%BA%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>每人約 130 元（較舊的資料），12/12 晚餐</span></li>
+          <li><div class="row"><b>K11 商場內餐廳</b><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8K11%20Select&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></div><span>12/14 午餐，7 個人比較好找位子</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ 注意事項 ============ -->
+<main class="wrap view" id="notes" data-view="notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+
+  <div class="day-head">
+    <p class="day-no">BEFORE YOU GO</p>
+    <h2>注意事項</h2>
+    <p class="intro">出發前請大家看一下這頁。有日期的事情，記得在那天之前完成。</p>
+  </div>
+
+  <section id="n-check" class="block">
+    <h3 class="subhead">出發前要做的事</h3>
+    <ul class="checklist" id="checklist">
+      <li><label><input type="checkbox" id="chk-id"><span class="when">現在</span><span class="what">確認台胞證效期還夠</span></label></li>
+      <li><label><input type="checkbox" id="chk-apps"><span class="when">現在</span><span class="what">註冊微信、支付寶，綁台灣信用卡（看下面「App 與付款」）</span></label></li>
+      <li><label><input type="checkbox" id="chk-ferry"><span class="when">11/28（六）9:00</span><span class="what">搶 12/13 鼓浪嶼船票（提前 15 天放票），建議選上午 9:30 左右的班次</span></label></li>
+      <li><label><input type="checkbox" id="chk-hdl"><span class="when">12/4 前後</span><span class="what">打電話訂 12/12（六）18:00 海底撈 7 位</span></label></li>
+      <li><label><input type="checkbox" id="chk-npt"><span class="when">12/8（二）起</span><span class="what">60 歲以下的人預約 12/12 南普陀寺</span></label></li>
+      <li><label><input type="checkbox" id="chk-last"><span class="when">出發前幾天</span><span class="what">查 K11 LINE 快閃還在不在；問飯店下車點和電梯；確認行動電源有 3C 標誌</span></label></li>
+    </ul>
+    <p class="hint">勾選只會記在你自己的手機上，不會同步給其他人。</p>
+  </section>
+
+  <section id="n-tickets" class="block">
+    <h3 class="subhead">要買票或預約的</h3>
+    <div class="tickets">
+      <article class="ticket">
+        <div class="ticket-head"><b>鼓浪嶼船票（最重要）</b><span class="price">35 元／人・往返</span></div>
+        <dl>
+          <dt>何時</dt><dd>提前 15 天，每天上午 9:00 放票。12/13 的票約 11/28 上午 9:00 開賣（以小程序顯示為準）</dd>
+          <dt>在哪</dt><dd>「屿见厦门」小程序（微信或支付寶都有）</dd>
+          <dt>注意</dt><dd>實名制，要填台胞證資料。碼頭現場不賣票。一個帳號最多買 10 張，一個人就能幫 7 人一起買。上午 8–10 點的班次最搶手。需要輪椅或優先安檢，可以在小程序申請。70 歲以上的外地長輩沒有免費優惠。</dd>
+        </dl>
+      </article>
+      <article class="ticket">
+        <div class="ticket-head"><b>南普陀寺</b><span class="price">免費</span></div>
+        <dl>
+          <dt>何時</dt><dd>最早提前 4 天，12/8 起可以預約 12/12</dd>
+          <dt>在哪</dt><dd>微信小程序「南普陀寺预约服务平台」</dd>
+          <dt>注意</dt><dd>60 歲以上帶台胞證可以直接進去，不用預約；其他人一定要預約。開放時間 8:00–18:00。</dd>
+        </dl>
+      </article>
+      <article class="ticket">
+        <div class="ticket-head"><b>植物園</b><span class="price">約 30 元</span></div>
+        <dl>
+          <dt>何時</dt><dd>當天現場買</dd>
+          <dt>注意</dt><dd>長輩有半價優待票，帶台胞證。冬季開放到 17:30。景交車單程 5 元、全程 10 元。</dd>
+        </dl>
+      </article>
+      <article class="ticket">
+        <div class="ticket-head"><b>菽莊花園＋鋼琴博物館</b><span class="price">約 30 元起</span></div>
+        <dl>
+          <dt>何時</dt><dd>當天現場買，一張票可以進兩館</dd>
+        </dl>
+      </article>
+      <article class="ticket">
+        <div class="ticket-head"><b>海底撈 SM 店</b><span class="price">每人約 130 元</span></div>
+        <dl>
+          <dt>何時</dt><dd>提前幾天訂位，<a href="#n-hdl">方法看這裡</a></dd>
+        </dl>
+      </article>
+      <article class="ticket free">
+        <div class="ticket-head"><b>不用買票</b></div>
+        <p>八市、中山路、SM、K11、沙坡尾、演武大橋觀景平台、最美轉角、美國領事館（看外觀）、五緣灣濕地公園。</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="n-places" class="block">
+    <h3 class="subhead">叫車目的地</h3>
+    <p class="intro">滴滴和高德用簡體字搜尋比較準。按「複製」再貼到叫車 App 的目的地欄位，或直接開地圖。</p>
+    <ul class="places">
+      <li><b>飯店</b><code>维尚设计师潮宿(中山路步行街店)</code><span class="acts"><button class="copy" type="button" data-copy="维尚设计师潮宿(中山路步行街店)">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E7%BB%B4%E5%B0%9A%E8%AE%BE%E8%AE%A1%E5%B8%88%E6%BD%AE%E5%AE%BF%20%E4%B8%AD%E5%B1%B1%E8%B7%AF%E6%AD%A5%E8%A1%8C%E8%A1%97%E5%BA%97&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>機場 T3</b><code>厦门高崎国际机场T3航站楼</code><span class="acts"><button class="copy" type="button" data-copy="厦门高崎国际机场T3航站楼">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E9%AB%98%E5%B4%8E%E5%9B%BD%E9%99%85%E6%9C%BA%E5%9C%BAT3%E8%88%AA%E7%AB%99%E6%A5%BC&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>南普陀寺</b><code>南普陀寺</code><span class="acts"><button class="copy" type="button" data-copy="南普陀寺">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E5%8D%97%E6%99%AE%E9%99%80%E5%AF%BA&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>植物園南門</b><code>厦门园林植物园南门</code><span class="acts"><button class="copy" type="button" data-copy="厦门园林植物园南门">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E5%9B%AD%E6%9E%97%E6%A4%8D%E7%89%A9%E5%9B%AD%E5%8D%97%E9%97%A8&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>SM 城市廣場</b><code>SM城市广场</code><span class="acts"><button class="copy" type="button" data-copy="SM城市广场">複製</button><a class="map" href="https://uri.amap.com/search?keyword=SM%E5%9F%8E%E5%B8%82%E5%B9%BF%E5%9C%BA%20%E5%98%89%E7%A6%BE%E8%B7%AF&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>鼓浪嶼碼頭</b><code>厦门国际邮轮中心厦鼓码头</code><span class="acts"><button class="copy" type="button" data-copy="厦门国际邮轮中心厦鼓码头">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8%E5%9B%BD%E9%99%85%E9%82%AE%E8%BD%AE%E4%B8%AD%E5%BF%83%E5%8E%A6%E9%BC%93%E7%A0%81%E5%A4%B4&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>沙坡尾</b><code>沙坡尾</code><span class="acts"><button class="copy" type="button" data-copy="沙坡尾">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E6%B2%99%E5%9D%A1%E5%B0%BE&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+      <li><b>K11</b><code>厦门K11 Select</code><span class="acts"><button class="copy" type="button" data-copy="厦门K11 Select">複製</button><a class="map" href="https://uri.amap.com/search?keyword=%E5%8E%A6%E9%97%A8K11%20Select&amp;city=350200&amp;callnative=1&amp;src=xm-family-trip" target="_blank" rel="noopener">地圖</a></span></li>
+    </ul>
+    <p class="hint">飯店名稱如果搜不到，改搜「中山路步行街」，或請飯店用微信傳定位給你。</p>
+  </section>
+
+  <section id="n-hdl" class="block">
+    <h3 class="subhead">海底撈怎麼訂位（不需要大陸門號）</h3>
+    <ol class="steps">
+      <li>
+        <b>打電話到門店訂位（最穩）</b>
+        <div class="phone"><code id="hdl-phone">+86 592 5225260</code><button class="copy" type="button" data-copy="+86 592 5225260">複製號碼</button></div>
+        <p>另一支是 0592-5225261。報姓名、12/12（六）18:00、7 位（其中 2 位長輩），留台灣手機號碼。這組電話是較舊的資料，打之前先用高德地圖或大眾點評確認。</p>
+      </li>
+      <li>
+        <b>用微信小程序「海底捞」試試看</b>
+        <p>用台灣門號登入，收得到驗證簡訊就能直接訂位。</p>
+      </li>
+      <li>
+        <b>當天一到 SM 先上 5 樓取號</b>
+        <p>16:30 左右到 SM，先拿號碼牌再去逛，18:00 左右通常差不多輪到。</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="n-apps" class="block">
+    <h3 class="subhead">手機 App 與付款</h3>
+    <div class="apps">
+      <div class="app"><b>微信 WeChat <span class="tag book">必裝</span></b><p>在台灣就先註冊好，新帳號可能要請已經有微信的朋友掃碼幫忙驗證。用台胞證做實名認證，再綁台灣信用卡開通微信支付。預約南普陀、買船票、訂海底撈都會用到。</p></div>
+      <div class="app"><b>支付寶 Alipay <span class="tag book">必裝</span></b><p>綁台灣信用卡。App 裡面就有滴滴和高德打車，叫車付款不用另外設定。</p></div>
+      <div class="app"><b>高德地圖</b><p>導航、看車程。這頁的地圖按鈕都是開高德。Google 地圖在大陸位置會偏，不好用。</p></div>
+      <div class="app"><b>大眾點評</b><p>找餐廳、看評價和排隊狀況。</p></div>
+    </div>
+    <ul class="plain">
+      <li>信用卡要先開通國外交易和網路交易。</li>
+      <li>刷卡驗證的 OTP 簡訊會傳到台灣門號，在當地一定要能收簡訊。</li>
+      <li>2–3 個人負責付款就好，不用 7 個人都綁卡。</li>
+      <li>外國卡大額付款可能有手續費（以前是單筆超過 200 人民幣收 3%），付款前 App 會顯示。信用卡本身也有海外交易手續費。</li>
+      <li>每人帶一點人民幣現金備用，特別是長輩。</li>
+      <li>網路：用台灣門號漫遊或 eSIM，LINE、Google、IG 都能直接用；換成大陸當地的 SIM 卡就不能用。</li>
+    </ul>
+  </section>
+
+  <section id="n-other" class="block">
+    <h3 class="subhead">其他提醒</h3>
+    <ul class="plain">
+      <li><b>台胞證</b>：入境、買船票、預約、買優待票都要用，隨身帶著。</li>
+      <li><b>叫車</b>：一台車最多坐 4 位乘客，7 個人要叫兩台。第 1 天和第 4 天帶著行李，叫車時可以選 6 人座或空間大一點的車型。</li>
+      <li><b>飯店</b>：不含早餐，可以吃黃則和或八市附近的早餐攤。中山路是步行街，先問清楚下車點；房間在 3 樓，問有沒有電梯。</li>
+      <li><b>人潮</b>：12/12（六）南普陀和植物園、12/13（日）鼓浪嶼，週末人多，盡量早點出門。</li>
+      <li><b>天氣</b>：12 月中約 12–20°C，早晚比較涼，鼓浪嶼海邊風大，帶薄外套。</li>
+      <li><b>長輩</b>：建議帶拐杖椅或折疊輪椅，以及常備藥。</li>
+      <li><b>行動電源</b>：大陸國內航班禁止沒有 3C 標誌的行動電源，兩岸航班有沒有適用還查不到。保險起見帶有 3C 標誌的，或出發前先問廈門航空。行動電源一律放隨身行李，不能托運。</li>
+      <li><b>插座</b>：大陸是 220V，台灣的兩孔扁插頭大多可以直接插。手機充電器沒問題，吹風機等電器要先確認支援 220V。</li>
+      <li><b>回程</b>：12/14 15:15 前要到 T3，最晚 14:45 從 K11 出發。回程降落台北松山機場。</li>
+    </ul>
+  </section>
+
+  <a class="map back" href="#plan">回到行程</a>
+</main>
+
+<footer>
+  <div class="wrap">資料查詢於 2026 年 10 月。票價、開放時間和規定可能會變，以官方公告和小程序顯示為準。</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script>
+(function () {
+  var reduce = false;
+  try { reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+
+  /* Page switch */
+  var views = { plan: document.getElementById("plan"), notes: document.getElementById("notes") };
+  var chipSets = { plan: document.getElementById("chips-plan"), notes: document.getElementById("chips-notes") };
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".seg button"));
+  var bar = document.querySelector(".bar");
+  var current = "plan";
+
+  function show(v) {
+    if (!views[v]) return;
+    current = v;
+    Object.keys(views).forEach(function (k) {
+      views[k].hidden = k !== v;
+      chipSets[k].hidden = k !== v;
+    });
+    tabs.forEach(function (t) { t.setAttribute("aria-selected", t.getAttribute("data-view") === v ? "true" : "false"); });
+  }
+  function setHash(id) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
+  function scrollToView(v) {
+    var y = views[v].getBoundingClientRect().top + window.pageYOffset - (bar ? bar.offsetHeight : 0);
+    if (window.pageYOffset > y) window.scrollTo(0, Math.max(0, y));
+  }
+  function go(id, smooth) {
+    var el = document.getElementById(id);
+    if (!el) return false;
+    var holder = el.closest("[data-view]");
+    var v = holder ? holder.getAttribute("data-view") : null;
+    if (v && v !== current) show(v);
+    if (el === views[v]) { scrollToView(v); }
+    else { el.scrollIntoView({ behavior: smooth && !reduce ? "smooth" : "auto", block: "start" }); }
+    setHash(id);
+    return true;
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () {
+      var v = t.getAttribute("data-view");
+      show(v);
+      scrollToView(v);
+      setHash(v);
+    });
+  });
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a) return;
+    var id = a.getAttribute("href").slice(1);
+    if (id && document.getElementById(id)) { e.preventDefault(); go(id, true); }
+  });
+  var start = (location.hash || "").slice(1);
+  if (start && document.getElementById(start)) go(start, false);
+
+  /* Active chip */
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var set = chipSets[current];
+        var links = set.querySelectorAll("a");
+        links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + en.target.id); });
+        var on = set.querySelector("a.on");
+        if (on) { try { on.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (e) {} }
+      });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    document.querySelectorAll(".view section[id]").forEach(function (s) { io.observe(s); });
+  }
+
+  /* Checklist (this phone only) */
+  var KEY = "xm-trip-checklist-v1";
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { saved = {}; }
+  document.querySelectorAll("#checklist input[type=checkbox]").forEach(function (b) {
+    if (saved[b.id]) b.checked = true;
+    b.addEventListener("change", function () {
+      saved[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+    });
+  });
+
+  /* Copy buttons */
+  function selectNear(btn) {
+    var target = btn.parentElement && btn.parentElement.parentElement && btn.parentElement.parentElement.querySelector("code");
+    if (!target) target = btn.parentElement && btn.parentElement.querySelector("code");
+    if (!target) return;
+    try {
+      var r = document.createRange(); r.selectNodeContents(target);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    } catch (e) {}
+  }
+  document.querySelectorAll(".copy[data-copy]").forEach(function (btn) {
+    var label = btn.textContent;
+    btn.addEventListener("click", function () {
+      var text = btn.getAttribute("data-copy");
+      var reset = function (ms) { setTimeout(function () { btn.textContent = label; }, ms); };
+      var done = function () { btn.textContent = "已複製"; reset(1600); };
+      var fail = function () { selectNear(btn); btn.textContent = "請長按文字複製"; reset(2400); };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fail);
+        else fail();
+      } catch (e) { fail(); }
+    });
+  });
+
+  /* Itinerary board: drag to reorder. Saved on this device only. */
+  (function () {
+    var host = document.getElementById("board-days");
+    if (!host) return;
+    var KEY = "xm-trip-plan-v1";
+    var DAYS = ["day1", "day2", "day3", "day4"];
+    var statusEl = document.getElementById("board-status");
+    var resetBtn = document.getElementById("board-reset");
+    var copyBtn = document.getElementById("board-copy");
+    var textBox = document.getElementById("board-text");
+    var live = document.getElementById("board-live");
+    var lis = {}, cards = {}, titles = {}, lists = {}, ols = {}, warns = {}, heads = {};
+    var orig = { order: {}, times: {} };
+    var times = {};
+
+    function pad(n) { return (n < 10 ? "0" : "") + n; }
+    function mins(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : 0; }
+    function timeOf(id) { return times[id] || orig.times[id]; }
+
+    function makeCard(id, t, title, fixed) {
+      var c = document.createElement("li");
+      c.className = "card" + (fixed ? " fixed" : "");
+      c.setAttribute("data-id", id);
+      var g = document.createElement(fixed ? "span" : "button");
+      if (fixed) { g.className = "fixed-tag"; g.textContent = "固定"; }
+      else { g.type = "button"; g.className = "grip"; g.setAttribute("aria-label", "移動「" + title + "」：可用方向鍵上下移動、左右換天"); }
+      var b = document.createElement(fixed ? "span" : "button");
+      b.className = "btime";
+      if (!fixed) b.type = "button";
+      var s = document.createElement("span");
+      s.className = "btitle";
+      s.textContent = title;
+      c.appendChild(g); c.appendChild(b); c.appendChild(s);
+      cards[id] = c;
+      return c;
+    }
+
+    DAYS.forEach(function (d) {
+      var sec = document.getElementById(d);
+      var ol = sec.querySelector(".timeline");
+      var no = sec.querySelector(".day-no");
+      ols[d] = ol;
+      heads[d] = { no: no.firstChild.textContent.trim(), date: no.querySelector("span").textContent.trim() };
+      var col = document.createElement("div");
+      col.className = "bday";
+      var head = document.createElement("div");
+      head.className = "bday-head";
+      var a = document.createElement("span"); a.className = "mono"; a.textContent = heads[d].no;
+      var b = document.createElement("span"); b.className = "date"; b.textContent = heads[d].date;
+      var w = document.createElement("span"); w.className = "bday-warn"; w.textContent = "時間順序要調整"; w.hidden = true;
+      var t = document.createElement("b"); t.className = "ttl"; t.textContent = sec.querySelector("h2").textContent;
+      head.appendChild(a); head.appendChild(b); head.appendChild(w); head.appendChild(t);
+      var list = document.createElement("ol");
+      list.className = "blist";
+      list.setAttribute("data-day", d);
+      list.setAttribute("aria-label", heads[d].no + " " + heads[d].date);
+      col.appendChild(head); col.appendChild(list);
+      host.appendChild(col);
+      lists[d] = list; warns[d] = w;
+      orig.order[d] = [];
+      Array.prototype.forEach.call(ol.children, function (li, i) {
+        var id = d + "-" + (i + 1);
+        li.setAttribute("data-id", id);
+        lis[id] = li;
+        titles[id] = li.querySelector("h3").textContent.trim();
+        orig.times[id] = li.querySelector("time").textContent.trim();
+        orig.order[d].push(id);
+        list.appendChild(makeCard(id, orig.times[id], titles[id], li.hasAttribute("data-fixed")));
+      });
+    });
+
+    function currentOrder() {
+      var o = {};
+      DAYS.forEach(function (d) {
+        o[d] = Array.prototype.map.call(lists[d].children, function (c) { return c.getAttribute("data-id"); });
+      });
+      return o;
+    }
+
+    function isChanged(order) {
+      if (Object.keys(times).length) return true;
+      return DAYS.some(function (d) { return order[d].join() !== orig.order[d].join(); });
+    }
+
+    function render(order) {
+      DAYS.forEach(function (d) {
+        order[d].forEach(function (id) { lists[d].appendChild(cards[id]); ols[d].appendChild(lis[id]); });
+      });
+      Object.keys(lis).forEach(function (id) {
+        var t = timeOf(id);
+        lis[id].querySelector("time").textContent = t;
+        var b = cards[id].querySelector(".btime");
+        b.textContent = t;
+        if (b.tagName === "BUTTON") b.setAttribute("aria-label", "修改「" + titles[id] + "」的時間，現在是 " + t);
+      });
+      DAYS.forEach(function (d) {
+        var max = -1, bad = false;
+        order[d].forEach(function (id) {
+          var m = mins(timeOf(id)), off = m < max;
+          cards[id].querySelector(".btime").classList.toggle("off", off);
+          if (off) bad = true;
+          max = Math.max(max, m);
+        });
+        warns[d].hidden = !bad;
+      });
+      var changed = isChanged(order);
+      statusEl.textContent = changed ? "已調整，只存在這個裝置" : "原本的行程";
+      statusEl.classList.toggle("on", changed);
+      resetBtn.disabled = !changed;
+      return changed;
+    }
+
+    function save() {
+      var order = currentOrder();
+      var changed = render(order);
+      try {
+        if (changed) localStorage.setItem(KEY, JSON.stringify({ order: order, times: times }));
+        else localStorage.removeItem(KEY);
+      } catch (e) {}
+    }
+
+    function announce(c) {
+      var d = c.parentElement.getAttribute("data-day");
+      var n = Array.prototype.indexOf.call(c.parentElement.children, c) + 1;
+      live.textContent = "「" + titles[c.getAttribute("data-id")] + "」移到 " + heads[d].no + " 第 " + n + " 項";
+    }
+
+    /* Restore this device's saved version, dropping anything unknown */
+    var start = orig.order;
+    try {
+      var st = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (st && st.order) {
+        var seen = {}, ok = {};
+        DAYS.forEach(function (d) {
+          ok[d] = (st.order[d] || []).filter(function (id) {
+            if (lis[id] && !seen[id]) { seen[id] = true; return true; }
+            return false;
+          });
+        });
+        DAYS.forEach(function (d) { orig.order[d].forEach(function (id) { if (!seen[id]) ok[d].push(id); }); });
+        Object.keys(st.times || {}).forEach(function (id) {
+          var t = st.times[id];
+          if (lis[id] && !lis[id].hasAttribute("data-fixed") && /^\d{1,2}:\d{2}$/.test(t) && t !== orig.times[id]) times[id] = t;
+        });
+        start = ok;
+      }
+    } catch (e) {}
+    render(start);
+
+    /* Drag and drop */
+    if (typeof window.Sortable === "function") {
+      DAYS.forEach(function (d) {
+        window.Sortable.create(lists[d], {
+          group: "xm-trip", handle: ".grip", draggable: ".card", animation: reduce ? 0 : 160,
+          forceFallback: true, fallbackOnBody: true, fallbackTolerance: 3,
+          ghostClass: "is-ghost", dragClass: "is-drag",
+          scroll: true, bubbleScroll: true, scrollSensitivity: 60, scrollSpeed: 12,
+          onEnd: function (e) { save(); announce(e.item); }
+        });
+      });
+    } else {
+      document.getElementById("board-hint").textContent = "拖曳功能沒有載入成功，請重新整理頁面；在電腦上也可以點左邊的點點，再用方向鍵移動。調整只會存在你自己的裝置上。";
+    }
+
+    /* Keyboard: arrows on the grip move the stop */
+    host.addEventListener("keydown", function (e) {
+      var g = e.target.closest && e.target.closest(".grip");
+      if (!g) return;
+      var c = g.parentElement, list = c.parentElement, i = DAYS.indexOf(list.getAttribute("data-day"));
+      if (e.key === "ArrowUp" && c.previousElementSibling) list.insertBefore(c, c.previousElementSibling);
+      else if (e.key === "ArrowDown" && c.nextElementSibling) list.insertBefore(c.nextElementSibling, c);
+      else if (e.key === "ArrowLeft" && i > 0) lists[DAYS[i - 1]].appendChild(c);
+      else if (e.key === "ArrowRight" && i < DAYS.length - 1) lists[DAYS[i + 1]].insertBefore(c, lists[DAYS[i + 1]].firstChild);
+      else return;
+      e.preventDefault();
+      save();
+      g.focus();
+      announce(c);
+    });
+
+    /* Tap a time to change it */
+    host.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("button.btime");
+      if (!b) return;
+      var c = b.parentElement, id = c.getAttribute("data-id");
+      var inp = document.createElement("input");
+      inp.type = "time";
+      inp.className = "tin";
+      inp.id = "tin-" + id;
+      inp.step = 300;
+      var m = mins(timeOf(id));
+      inp.value = pad(Math.floor(m / 60)) + ":" + pad(m % 60);
+      inp.setAttribute("aria-label", "「" + titles[id] + "」的新時間");
+      b.hidden = true;
+      c.insertBefore(inp, b.nextSibling);
+      inp.focus();
+      var done = false;
+      function finish(keep, refocus) {
+        if (done) return;
+        done = true;
+        if (keep && /^\d{2}:\d{2}$/.test(inp.value)) {
+          var t = String(+inp.value.slice(0, 2)) + ":" + inp.value.slice(3, 5);
+          if (t === orig.times[id]) delete times[id]; else times[id] = t;
+        }
+        inp.remove();
+        b.hidden = false;
+        save();
+        if (refocus) b.focus();
+      }
+      inp.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") { ev.preventDefault(); finish(true, true); }
+        else if (ev.key === "Escape") { ev.preventDefault(); finish(false, true); }
+      });
+      inp.addEventListener("blur", function () { finish(true, false); });
+    });
+
+    /* Reset, with an in-page confirm */
+    var armed = null;
+    function disarm() {
+      clearTimeout(armed);
+      armed = null;
+      resetBtn.textContent = "還原成原本的行程";
+      resetBtn.classList.remove("armed");
+    }
+    resetBtn.addEventListener("click", function () {
+      if (!armed) {
+        resetBtn.textContent = "再按一次確定還原";
+        resetBtn.classList.add("armed");
+        armed = setTimeout(disarm, 4000);
+        return;
+      }
+      disarm();
+      times = {};
+      render(orig.order);
+      save();
+      live.textContent = "已還原成原本的行程";
+    });
+
+    /* Copy the current version as plain text for LINE */
+    copyBtn.addEventListener("click", function () {
+      var order = currentOrder();
+      var lines = ["廈門好吃驚" + (isChanged(order) ? "（調整後的行程）" : "")];
+      DAYS.forEach(function (d) {
+        lines.push("", "【" + heads[d].no + "　" + heads[d].date + "】");
+        order[d].forEach(function (id) { lines.push(timeOf(id) + "　" + titles[id]); });
+      });
+      var text = lines.join("\n");
+      var label = "複製行程文字";
+      var fail = function () {
+        textBox.value = text;
+        textBox.hidden = false;
+        try { textBox.focus(); textBox.select(); } catch (e) {}
+        copyBtn.textContent = "請長按下面的文字複製";
+        setTimeout(function () { copyBtn.textContent = label; }, 2600);
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            textBox.hidden = true;
+            copyBtn.textContent = "已複製，可以貼到 LINE";
+            setTimeout(function () { copyBtn.textContent = label; }, 2000);
+          }, fail);
+        } else fail();
+      } catch (e) { fail(); }
+    });
+  })();
+})();
+</script>
+
+</body>
+</html>
