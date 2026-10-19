@@ -227,11 +227,12 @@ h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem
 
 footer .wrap { padding-block: 16px 40px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); }
 
-/* Itinerary board (drag to reorder) */
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Itinerary board (drag, edit, add; shared when online) */
 .board-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .board-status { margin-right: auto; font-size: 0.85rem; color: var(--muted); }
-.board-status.on { color: var(--flower); font-weight: 700; }
+.board-status[data-state="live"] { color: var(--sea); font-weight: 700; }
+.board-status[data-state="live"]::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--sea); margin-right: 6px; vertical-align: 1px; }
+.board-status[data-state="offline"], .board-status[data-state="error"] { color: var(--warn); font-weight: 700; }
 .tool {
   font: inherit; font-size: 0.85rem; font-weight: 500; line-height: 1.6; padding: 4px 12px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap;
@@ -239,6 +240,8 @@ footer .wrap { padding-block: 16px 40px; color: var(--muted); font-size: 0.82rem
 .tool:hover:not(:disabled) { border-color: var(--sea); }
 .tool:disabled { opacity: 0.45; cursor: default; }
 .tool.armed { border-color: var(--flower); color: var(--flower); }
+.tool.primary { background: var(--sea); border-color: var(--sea); color: var(--bg); font-weight: 700; }
+.tool.danger { color: var(--flower); margin-left: auto; }
 .board-text {
   width: 100%; min-height: 12rem; font: inherit; font-size: 0.88rem; line-height: 1.6; color: var(--ink);
   background: var(--surface); border: 1px solid var(--sea); border-radius: 12px; padding: 10px 12px; resize: vertical;
@@ -254,11 +257,10 @@ footer .wrap { padding-block: 16px 40px; color: var(--muted); font-size: 0.82rem
 .blist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; min-height: 48px; border-radius: 10px; }
 .blist:empty { border: 1.5px dashed var(--line); }
 .blist:empty::before { content: "可以把行程拖到這裡"; display: grid; place-items: center; min-height: 48px; font-size: 0.82rem; color: var(--muted); }
-.card {
-  display: grid; grid-template-columns: 30px auto minmax(0, 1fr); align-items: center; column-gap: 4px;
-  background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px 10px 4px 2px;
-}
+.card { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px 8px 4px 2px; min-width: 0; }
+.card-row { display: grid; grid-template-columns: 30px auto minmax(0, 1fr); align-items: center; column-gap: 2px; }
 .card.fixed { background: transparent; border-style: dashed; }
+.card.editing { background: var(--surface); border-color: var(--sea); }
 .grip {
   width: 30px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 8px; padding: 0;
   background: transparent; color: var(--muted); cursor: grab; touch-action: none;
@@ -266,16 +268,46 @@ footer .wrap { padding-block: 16px 40px; color: var(--muted); font-size: 0.82rem
 .grip::before { content: ""; width: 10px; height: 15px; background: radial-gradient(circle at 2.5px 2.5px, currentColor 1.5px, transparent 1.8px) 0 0 / 5px 5px; }
 .grip:hover, .grip:focus-visible { background: var(--sea-soft); color: var(--sea); }
 .fixed-tag { justify-self: center; font-size: 0.68rem; color: var(--muted); }
-.btime {
-  font: inherit; font-family: var(--font-mono); font-weight: 600; font-size: 0.9rem; font-variant-numeric: tabular-nums;
-  color: var(--sea); background: transparent; border: 1px dashed transparent; border-radius: 6px;
-  padding: 1px 5px; min-width: 3.4rem; text-align: left; cursor: pointer;
-}
-button.btime:hover { border-color: var(--sea); }
-span.btime { cursor: default; color: var(--muted); }
+.btime, .btitle { font: inherit; background: transparent; border: 1px dashed transparent; border-radius: 6px; text-align: left; cursor: pointer; }
+.btime { font-family: var(--font-mono); font-weight: 600; font-size: 0.9rem; font-variant-numeric: tabular-nums; color: var(--sea); padding: 1px 5px; min-width: 3.4rem; }
+.btitle { font-size: 0.92rem; line-height: 1.45; color: var(--ink); padding: 5px 4px; min-width: 0; overflow-wrap: anywhere; }
+.btime:hover:not(:disabled), .btitle:hover:not(:disabled) { border-color: var(--sea); }
+.btime:disabled, .btitle:disabled { cursor: default; }
+.card.fixed .btime { color: var(--muted); }
 .btime.off { color: var(--warn); border-color: var(--warn); }
-.tin { font: inherit; font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink); background: var(--surface); border: 1px solid var(--sea); border-radius: 6px; padding: 1px 4px; width: 6.6rem; }
-.btitle { font-size: 0.92rem; line-height: 1.45; padding-block: 5px; min-width: 0; overflow-wrap: anywhere; }
+.editor { display: grid; gap: 10px; padding: 10px 4px 6px 8px; margin-top: 4px; border-top: 1px dashed var(--line); }
+.bday > .editor { margin: 0; padding: 10px; border: 1px solid var(--sea); border-radius: 10px; background: var(--bg); }
+.ed-row { display: grid; grid-template-columns: 7.4rem minmax(0, 1fr); gap: 8px; }
+.ed-field { display: grid; gap: 2px; font-size: 0.78rem; color: var(--muted); min-width: 0; }
+.ed-field input, .ed-field textarea {
+  font: inherit; font-size: 0.95rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 6px 8px; width: 100%; min-width: 0;
+}
+.ed-field input:focus, .ed-field textarea:focus { border-color: var(--sea); outline: none; box-shadow: 0 0 0 2px var(--sea-soft); }
+.ed-field textarea { resize: vertical; line-height: 1.6; }
+.ed-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.add-btn {
+  font: inherit; font-size: 0.88rem; font-weight: 500; color: var(--sea); background: transparent;
+  border: 1.5px dashed var(--line); border-radius: 10px; padding: 6px; cursor: pointer;
+}
+.add-btn:hover { border-color: var(--sea); background: var(--sea-soft); }
+.readonly .grip, .readonly .add-btn, .readonly #board-undo, .readonly #board-reset { display: none; }
+.board-more { display: grid; gap: 8px; }
+@media (min-width: 640px) { .board-more { grid-template-columns: 1fr 1fr; align-items: start; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; min-width: 0; }
+.panel summary { cursor: pointer; padding: 10px 0; font-weight: 700; font-size: 0.95rem; }
+.panel[open] summary { border-bottom: 1px solid var(--line); }
+.loglist { list-style: none; margin: 0; padding: 2px 0 6px; display: grid; }
+.loglist li { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 0.9rem; }
+.loglist li + li { border-top: 1px solid var(--line); }
+.loglist .empty { color: var(--muted); }
+.log-text { flex: 1; min-width: 0; display: grid; overflow-wrap: anywhere; }
+.log-when { font-size: 0.78rem; color: var(--muted); }
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 20;
+  background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 0.9rem;
+  box-shadow: 0 6px 18px var(--shadow); max-width: calc(100% - 32px); text-align: center;
+}
 .card.is-ghost { opacity: 0.4; border-style: dashed; border-color: var(--sea); }
 .card.is-drag, .card.sortable-fallback { background: var(--surface); box-shadow: 0 10px 24px var(--shadow); opacity: 1 !important; }
 .timeline:empty { display: none; }
@@ -336,7 +368,7 @@ span.btime { cursor: default; color: var(--muted); }
 
     <nav class="overview" aria-label="四天一覽">
       <span class="label">四天一覽</span>
-      <a href="#board"><span class="mono">行程總覽</span><span>拖曳調整每天的順序，也可以換到別天</span></a>
+      <a href="#board"><span class="mono">行程總覽</span><span>大家一起調整：拖曳順序、修改、新增或刪除行程</span></a>
       <a href="#day1"><span class="mono">DAY 1 · 12/11</span><span>抵達・八市・中山路</span></a>
       <a href="#day2"><span class="mono">DAY 2 · 12/12</span><span>南普陀・海會樓・植物園・SM＋海底撈</span></a>
       <a href="#day3"><span class="mono">DAY 3 · 12/13</span><span>鼓浪嶼一整天</span></a>
@@ -379,17 +411,22 @@ span.btime { cursor: default; color: var(--muted); }
     <div class="day-head">
       <p class="day-no">OVERVIEW</p>
       <h2>行程總覽</h2>
-      <p class="intro">按住每一項左邊的點點拖曳，可以調整順序，也可以拖到別天。點時間可以修改。下面每天的詳細行程會跟著變。</p>
+      <p class="intro">按住左邊的點點拖曳，可以調整順序或換到別天。點一項可以改時間、名稱和說明，也可以刪除；每天最下面可以新增行程。下面每天的詳細行程會跟著變。</p>
     </div>
     <div class="board-tools">
       <span class="board-status" id="board-status">原本的行程</span>
+      <button type="button" class="tool" id="board-undo" disabled>復原上一步</button>
       <button type="button" class="tool" id="board-copy">複製行程文字</button>
-      <button type="button" class="tool" id="board-reset" disabled>還原成原本的行程</button>
+      <button type="button" class="tool" id="board-reset">全部還原</button>
     </div>
     <textarea class="board-text" id="board-text" readonly hidden aria-label="行程文字"></textarea>
     <div class="board" id="board-days"></div>
-    <p class="hint" id="board-hint">調整只會存在你自己的手機或電腦上，不會同步給其他人。想讓大家看到，按「複製行程文字」貼到 LINE 群組。航班和機場報到是固定的，不能移動。</p>
-    <p class="sr-only" id="board-live" aria-live="polite"></p>
+    <div class="board-more">
+      <details class="panel"><summary>修改紀錄</summary><ol class="loglist" id="board-log"></ol></details>
+      <details class="panel"><summary>最近刪除<span id="trash-count"></span></summary><ul class="loglist" id="board-trash"></ul></details>
+    </div>
+    <p class="hint" id="board-hint">拿到這個網址的人都可以一起修改，改了大家都看得到。改錯了可以按「復原上一步」，或在「修改紀錄」裡復原。航班和機場報到是固定的，不能修改。</p>
+    <div class="toast" id="board-toast" role="status" aria-live="polite" hidden></div>
   </section>
 
   <section id="day1">
@@ -653,6 +690,9 @@ span.btime { cursor: default; color: var(--muted); }
   <div class="wrap">資料查詢於 2026 年 10 月。票價、開放時間和規定可能會變，以官方公告和小程序顯示為準。</div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>window.XM_FIREBASE = {"projectId":"xiamen-trip-ku8u2"};</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script>
 (function () {
@@ -760,254 +800,493 @@ span.btime { cursor: default; color: var(--muted); }
     });
   });
 
-  /* Itinerary board: drag to reorder. Saved on this device only. */
+  /* Itinerary board: shared editing through Firestore when it loads (GitHub Pages),
+     otherwise saved on this device only. */
   (function () {
     var host = document.getElementById("board-days");
     if (!host) return;
-    var KEY = "xm-trip-plan-v1";
+    var CONFIG = window.XM_FIREBASE || null;
     var DAYS = ["day1", "day2", "day3", "day4"];
+    var section = document.getElementById("board");
     var statusEl = document.getElementById("board-status");
-    var resetBtn = document.getElementById("board-reset");
+    var hintEl = document.getElementById("board-hint");
+    var undoBtn = document.getElementById("board-undo");
     var copyBtn = document.getElementById("board-copy");
+    var resetBtn = document.getElementById("board-reset");
     var textBox = document.getElementById("board-text");
-    var live = document.getElementById("board-live");
-    var lis = {}, cards = {}, titles = {}, lists = {}, ols = {}, warns = {}, heads = {};
-    var orig = { order: {}, times: {} };
-    var times = {};
+    var logList = document.getElementById("board-log");
+    var trashList = document.getElementById("board-trash");
+    var trashCount = document.getElementById("trash-count");
+    var toastEl = document.getElementById("board-toast");
+
+    var OR = {}, tmpl = {}, origNote = {}, heads = {}, lists = {}, ols = {}, warns = {}, cards = {};
+    var state = { stops: {}, log: [] };
+    var dragging = false, renderQueued = false, editing = null, store = null, readOnly = false;
 
     function pad(n) { return (n < 10 ? "0" : "") + n; }
     function mins(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : 0; }
-    function timeOf(id) { return times[id] || orig.times[id]; }
+    function toInput(t) { var m = mins(t); return pad(Math.floor(m / 60)) + ":" + pad(m % 60); }
+    function fromInput(v) { return /^\d{2}:\d{2}/.test(v || "") ? String(+v.slice(0, 2)) + ":" + v.slice(3, 5) : null; }
+    function atMs(x) { return x && x.toMillis ? x.toMillis() : (typeof x === "number" ? x : 0); }
+    function amap(kw) { return "https://uri.amap.com/search?keyword=" + encodeURIComponent(kw) + "&city=350200&callnative=1&src=xm-family-trip"; }
+    function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+    function newId() { return "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function ago(ms) {
+      var s = (Date.now() - ms) / 1000;
+      if (s < 60) return "剛剛";
+      if (s < 3600) return Math.floor(s / 60) + " 分鐘前";
+      if (s < 86400) return Math.floor(s / 3600) + " 小時前";
+      var d = new Date(ms);
+      return (d.getMonth() + 1) + "/" + d.getDate() + " " + d.getHours() + ":" + pad(d.getMinutes());
+    }
+    var toastTimer = null;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2600);
+    }
 
-    function makeCard(id, t, title, fixed) {
-      var c = document.createElement("li");
-      c.className = "card" + (fixed ? " fixed" : "");
+    /* Read the original plan out of the page itself */
+    DAYS.forEach(function (d) {
+      var sec = document.getElementById(d);
+      var no = sec.querySelector(".day-no");
+      ols[d] = sec.querySelector(".timeline");
+      heads[d] = { no: no.firstChild.textContent.trim(), date: no.querySelector("span").textContent.trim(), title: sec.querySelector("h2").textContent };
+      Array.prototype.forEach.call(ols[d].children, function (li, i) {
+        var id = d + "-" + (i + 1);
+        tmpl[id] = li.cloneNode(true);
+        var p = li.querySelector("p");
+        origNote[id] = p ? p.textContent.trim() : "";
+        OR[id] = {
+          day: d, pos: (i + 1) * 1000, time: li.querySelector("time").textContent.trim(),
+          title: li.querySelector("h3").textContent.trim(), note: null,
+          fixed: li.hasAttribute("data-fixed"), deleted: false, orig: true
+        };
+      });
+
+      var col = el("div", "bday");
+      var head = el("div", "bday-head");
+      head.appendChild(el("span", "mono", heads[d].no));
+      head.appendChild(el("span", "date", heads[d].date));
+      warns[d] = head.appendChild(el("span", "bday-warn", "時間順序要調整"));
+      warns[d].hidden = true;
+      head.appendChild(el("b", "ttl", heads[d].title));
+      var list = el("ol", "blist");
+      list.setAttribute("data-day", d);
+      list.setAttribute("aria-label", heads[d].no + " " + heads[d].date);
+      var add = el("button", "add-btn", "＋ 新增行程");
+      add.type = "button";
+      add.setAttribute("data-add", d);
+      col.appendChild(head); col.appendChild(list); col.appendChild(add);
+      host.appendChild(col);
+      lists[d] = list;
+    });
+
+    function clone(o) { return JSON.parse(JSON.stringify(o)); }
+    function noteText(id, s) { return s.note != null ? s.note : (origNote[id] || ""); }
+    function ordered(d) {
+      return Object.keys(state.stops).filter(function (id) {
+        var s = state.stops[id];
+        return s.day === d && !s.deleted;
+      }).sort(function (a, b) { return state.stops[a].pos - state.stops[b].pos || (a < b ? -1 : 1); });
+    }
+
+    /* ---------- Rendering ---------- */
+    function cardFor(id) {
+      if (cards[id]) return cards[id];
+      var c = el("li", "card");
       c.setAttribute("data-id", id);
-      var g = document.createElement(fixed ? "span" : "button");
-      if (fixed) { g.className = "fixed-tag"; g.textContent = "固定"; }
-      else { g.type = "button"; g.className = "grip"; g.setAttribute("aria-label", "移動「" + title + "」：可用方向鍵上下移動、左右換天"); }
-      var b = document.createElement(fixed ? "span" : "button");
-      b.className = "btime";
-      if (!fixed) b.type = "button";
-      var s = document.createElement("span");
-      s.className = "btitle";
-      s.textContent = title;
-      c.appendChild(g); c.appendChild(b); c.appendChild(s);
+      var row = el("div", "card-row");
+      var g = el("button", "grip"); g.type = "button";
+      var f = el("span", "fixed-tag", "固定");
+      var t = el("button", "btime"); t.type = "button";
+      var n = el("button", "btitle"); n.type = "button";
+      row.appendChild(g); row.appendChild(f); row.appendChild(t); row.appendChild(n);
+      c.appendChild(row);
       cards[id] = c;
       return c;
     }
 
-    DAYS.forEach(function (d) {
-      var sec = document.getElementById(d);
-      var ol = sec.querySelector(".timeline");
-      var no = sec.querySelector(".day-no");
-      ols[d] = ol;
-      heads[d] = { no: no.firstChild.textContent.trim(), date: no.querySelector("span").textContent.trim() };
-      var col = document.createElement("div");
-      col.className = "bday";
-      var head = document.createElement("div");
-      head.className = "bday-head";
-      var a = document.createElement("span"); a.className = "mono"; a.textContent = heads[d].no;
-      var b = document.createElement("span"); b.className = "date"; b.textContent = heads[d].date;
-      var w = document.createElement("span"); w.className = "bday-warn"; w.textContent = "時間順序要調整"; w.hidden = true;
-      var t = document.createElement("b"); t.className = "ttl"; t.textContent = sec.querySelector("h2").textContent;
-      head.appendChild(a); head.appendChild(b); head.appendChild(w); head.appendChild(t);
-      var list = document.createElement("ol");
-      list.className = "blist";
-      list.setAttribute("data-day", d);
-      list.setAttribute("aria-label", heads[d].no + " " + heads[d].date);
-      col.appendChild(head); col.appendChild(list);
-      host.appendChild(col);
-      lists[d] = list; warns[d] = w;
-      orig.order[d] = [];
-      Array.prototype.forEach.call(ol.children, function (li, i) {
-        var id = d + "-" + (i + 1);
-        li.setAttribute("data-id", id);
-        lis[id] = li;
-        titles[id] = li.querySelector("h3").textContent.trim();
-        orig.times[id] = li.querySelector("time").textContent.trim();
-        orig.order[d].push(id);
-        list.appendChild(makeCard(id, orig.times[id], titles[id], li.hasAttribute("data-fixed")));
-      });
-    });
-
-    function currentOrder() {
-      var o = {};
-      DAYS.forEach(function (d) {
-        o[d] = Array.prototype.map.call(lists[d].children, function (c) { return c.getAttribute("data-id"); });
-      });
-      return o;
+    function paintCard(id) {
+      var s = state.stops[id], c = cardFor(id);
+      var g = c.querySelector(".grip"), f = c.querySelector(".fixed-tag"), t = c.querySelector(".btime"), n = c.querySelector(".btitle");
+      c.classList.toggle("fixed", !!s.fixed);
+      g.hidden = !!s.fixed; f.hidden = !s.fixed;
+      g.setAttribute("aria-label", "移動「" + s.title + "」：可用方向鍵上下移動、左右換天");
+      t.textContent = s.time;
+      t.disabled = n.disabled = !!s.fixed || readOnly;
+      t.setAttribute("aria-label", s.fixed ? s.time : "修改「" + s.title + "」，時間 " + s.time);
+      n.textContent = s.title;
+      if (s.fixed) n.removeAttribute("aria-label"); else n.setAttribute("aria-label", "修改「" + s.title + "」");
+      return c;
     }
 
-    function isChanged(order) {
-      if (Object.keys(times).length) return true;
-      return DAYS.some(function (d) { return order[d].join() !== orig.order[d].join(); });
+    function detailLi(id) {
+      var s = state.stops[id], li;
+      if (tmpl[id]) {
+        li = tmpl[id].cloneNode(true);
+        li.querySelector("h3").textContent = s.title;
+        if (s.note != null) {
+          var p = li.querySelector("p");
+          if (s.note === "") { if (p) p.remove(); }
+          else {
+            if (!p) { p = el("p"); li.querySelector("h3").after(p); }
+            p.textContent = s.note;
+          }
+        }
+      } else {
+        li = el("li");
+        li.appendChild(el("time"));
+        var box = el("div");
+        box.appendChild(el("h3", null, s.title));
+        if (s.note) box.appendChild(el("p", null, s.note));
+        var meta = el("div", "meta");
+        var a = el("a", "map", "地圖");
+        a.href = amap(s.title); a.target = "_blank"; a.rel = "noopener";
+        meta.appendChild(a);
+        box.appendChild(meta);
+        li.appendChild(box);
+      }
+      li.querySelector("time").textContent = s.time;
+      li.setAttribute("data-id", id);
+      return li;
     }
 
-    function render(order) {
+    function render() {
+      if (dragging) { renderQueued = true; return; }
+      renderQueued = false;
+      var keep = {};
       DAYS.forEach(function (d) {
-        order[d].forEach(function (id) { lists[d].appendChild(cards[id]); ols[d].appendChild(lis[id]); });
-      });
-      Object.keys(lis).forEach(function (id) {
-        var t = timeOf(id);
-        lis[id].querySelector("time").textContent = t;
-        var b = cards[id].querySelector(".btime");
-        b.textContent = t;
-        if (b.tagName === "BUTTON") b.setAttribute("aria-label", "修改「" + titles[id] + "」的時間，現在是 " + t);
-      });
-      DAYS.forEach(function (d) {
-        var max = -1, bad = false;
-        order[d].forEach(function (id) {
-          var m = mins(timeOf(id)), off = m < max;
-          cards[id].querySelector(".btime").classList.toggle("off", off);
+        var ids = ordered(d), max = -1, bad = false;
+        ids.forEach(function (id) {
+          keep[id] = true;
+          var c = paintCard(id);
+          lists[d].appendChild(c);
+          var m = mins(state.stops[id].time), off = m < max;
+          c.querySelector(".btime").classList.toggle("off", off);
           if (off) bad = true;
           max = Math.max(max, m);
         });
         warns[d].hidden = !bad;
+        var frag = document.createDocumentFragment();
+        ids.forEach(function (id) { frag.appendChild(detailLi(id)); });
+        ols[d].replaceChildren(frag);
       });
-      var changed = isChanged(order);
-      statusEl.textContent = changed ? "已調整，只存在這個裝置" : "原本的行程";
-      statusEl.classList.toggle("on", changed);
-      resetBtn.disabled = !changed;
-      return changed;
+      Object.keys(cards).forEach(function (id) {
+        if (!keep[id] && cards[id].parentNode) cards[id].parentNode.removeChild(cards[id]);
+      });
+      renderTrash();
+      renderLog();
     }
 
-    function save() {
-      var order = currentOrder();
-      var changed = render(order);
-      try {
-        if (changed) localStorage.setItem(KEY, JSON.stringify({ order: order, times: times }));
-        else localStorage.removeItem(KEY);
-      } catch (e) {}
+    function renderTrash() {
+      var ids = Object.keys(state.stops).filter(function (id) { return state.stops[id].deleted; })
+        .sort(function (a, b) { return atMs(state.stops[b].at) - atMs(state.stops[a].at); });
+      trashCount.textContent = ids.length ? "（" + ids.length + "）" : "";
+      trashList.replaceChildren();
+      if (!ids.length) { trashList.appendChild(el("li", "empty", "沒有刪除的行程")); return; }
+      ids.forEach(function (id) {
+        var s = state.stops[id], li = el("li");
+        var txt = el("span", "log-text");
+        txt.appendChild(el("b", null, s.title));
+        txt.appendChild(el("span", "log-when", heads[s.day].no + "・" + s.time));
+        var b = el("button", "tool", "放回");
+        b.type = "button";
+        b.setAttribute("data-restore", id);
+        li.appendChild(txt); li.appendChild(b);
+        trashList.appendChild(li);
+      });
     }
 
-    function announce(c) {
-      var d = c.parentElement.getAttribute("data-day");
-      var n = Array.prototype.indexOf.call(c.parentElement.children, c) + 1;
-      live.textContent = "「" + titles[c.getAttribute("data-id")] + "」移到 " + heads[d].no + " 第 " + n + " 項";
+    function undoneSet() {
+      var done = {};
+      state.log.forEach(function (g) { if (g.action === "undo" && g.ref) done[g.ref] = true; });
+      return done;
+    }
+    function canUndo(g, done) {
+      return g.before && g.action !== "undo" && g.action !== "reset" && !done[g.id] && state.stops[g.stop] && !state.stops[g.stop].fixed;
     }
 
-    /* Restore this device's saved version, dropping anything unknown */
-    var start = orig.order;
-    try {
-      var st = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (st && st.order) {
-        var seen = {}, ok = {};
-        DAYS.forEach(function (d) {
-          ok[d] = (st.order[d] || []).filter(function (id) {
-            if (lis[id] && !seen[id]) { seen[id] = true; return true; }
-            return false;
-          });
-        });
-        DAYS.forEach(function (d) { orig.order[d].forEach(function (id) { if (!seen[id]) ok[d].push(id); }); });
-        Object.keys(st.times || {}).forEach(function (id) {
-          var t = st.times[id];
-          if (lis[id] && !lis[id].hasAttribute("data-fixed") && /^\d{1,2}:\d{2}$/.test(t) && t !== orig.times[id]) times[id] = t;
-        });
-        start = ok;
+    function renderLog() {
+      var done = undoneSet();
+      logList.replaceChildren();
+      undoBtn.disabled = !lastUndoable();
+      if (!state.log.length) { logList.appendChild(el("li", "empty", "還沒有人修改")); return; }
+      state.log.forEach(function (g, i) {
+        var li = el("li");
+        var txt = el("span", "log-text");
+        txt.appendChild(el("span", null, g.label));
+        txt.appendChild(el("span", "log-when", ago(atMs(g.at))));
+        li.appendChild(txt);
+        if (canUndo(g, done)) {
+          var b = el("button", "tool", "復原");
+          b.type = "button";
+          b.setAttribute("data-undo", String(i));
+          li.appendChild(b);
+        } else if (done[g.id]) {
+          li.appendChild(el("span", "log-when", "已復原"));
+        }
+        logList.appendChild(li);
+      });
+    }
+
+    /* ---------- Writes ---------- */
+    function write(ops, log) {
+      if (readOnly) { toast("目前連不上共用行程，不能修改"); return Promise.reject(); }
+      if (log) log.label = String(log.label).slice(0, 200);
+      return store.write(ops, log).catch(function (err) {
+        toast("沒有存成功，請再試一次" + (err && err.code ? "（" + err.code + "）" : ""));
+      });
+    }
+
+    function move(id, day, prevId, nextId) {
+      var s = state.stops[id];
+      if (!s || s.fixed) return;
+      var a = prevId && state.stops[prevId] ? state.stops[prevId].pos : null;
+      var b = nextId && state.stops[nextId] ? state.stops[nextId].pos : null;
+      var pos = a != null && b != null ? (a + b) / 2 : a != null ? a + 1000 : b != null ? b - 1000 : 1000;
+      if (s.day === day && (prevId ? a < s.pos : true) && (nextId ? s.pos < b : true)) { render(); return; }
+      var rest = ordered(day).filter(function (x) { return x !== id; });
+      var n = prevId ? rest.indexOf(prevId) + 2 : 1;
+      write([{ id: id, patch: { day: day, pos: pos } }], {
+        stop: id, action: "move", label: "「" + s.title + "」移到 " + heads[day].no + " 第 " + n + " 項",
+        before: { day: s.day, pos: s.pos }, after: { day: day, pos: pos }
+      });
+    }
+
+    function lastUndoable() {
+      var done = undoneSet();
+      for (var i = 0; i < state.log.length; i++) {
+        if (state.log[i].action === "reset") return null;
+        if (canUndo(state.log[i], done)) return state.log[i];
       }
-    } catch (e) {}
-    render(start);
-
-    /* Drag and drop */
-    if (typeof window.Sortable === "function") {
-      DAYS.forEach(function (d) {
-        window.Sortable.create(lists[d], {
-          group: "xm-trip", handle: ".grip", draggable: ".card", animation: reduce ? 0 : 160,
-          forceFallback: true, fallbackOnBody: true, fallbackTolerance: 3,
-          ghostClass: "is-ghost", dragClass: "is-drag",
-          scroll: true, bubbleScroll: true, scrollSensitivity: 60, scrollSpeed: 12,
-          onEnd: function (e) { save(); announce(e.item); }
-        });
-      });
-    } else {
-      document.getElementById("board-hint").textContent = "拖曳功能沒有載入成功，請重新整理頁面；在電腦上也可以點左邊的點點，再用方向鍵移動。調整只會存在你自己的裝置上。";
+      return null;
     }
 
-    /* Keyboard: arrows on the grip move the stop */
+    function undo(g) {
+      var s = state.stops[g.stop];
+      if (!g || !g.before || !s || s.fixed) return;
+      var cur = {};
+      Object.keys(g.before).forEach(function (k) { cur[k] = s[k] === undefined ? null : s[k]; });
+      var label = "復原：" + g.label;
+      write([{ id: g.stop, patch: g.before }], { stop: g.stop, action: "undo", label: label, before: cur, after: g.before, ref: g.id })
+        .then(function () { toast(label); });
+    }
+
+    /* ---------- Editor ---------- */
+    function field(label, input) {
+      var l = el("label", "ed-field");
+      l.appendChild(el("span", null, label));
+      l.appendChild(input);
+      return l;
+    }
+    function buildForm(prefix, vals, actions) {
+      var f = el("form", "editor");
+      var time = el("input"); time.type = "time"; time.step = 300; time.id = prefix + "-time"; time.value = toInput(vals.time); time.required = true;
+      var title = el("input"); title.type = "text"; title.id = prefix + "-title"; title.maxLength = 80; title.value = vals.title; title.required = true;
+      var note = el("textarea"); note.id = prefix + "-note"; note.rows = 3; note.maxLength = 500; note.value = vals.note;
+      var row = el("div", "ed-row");
+      row.appendChild(field("時間", time)).classList.add("ed-time");
+      row.appendChild(field("行程", title)).classList.add("ed-title");
+      f.appendChild(row);
+      f.appendChild(field("說明", note));
+      var acts = el("div", "ed-actions");
+      actions.forEach(function (a) {
+        var b = el("button", "tool" + (a.cls ? " " + a.cls : ""), a.text);
+        b.type = a.submit ? "submit" : "button";
+        if (a.act) b.setAttribute("data-act", a.act);
+        acts.appendChild(b);
+      });
+      f.appendChild(acts);
+      return f;
+    }
+
+    function closeEditor() {
+      if (!editing) return;
+      var c = cards[editing];
+      if (c) { var f = c.querySelector(".editor"); if (f) f.remove(); c.classList.remove("editing"); }
+      editing = null;
+    }
+
+    function openEditor(id, focusTime) {
+      var s = state.stops[id];
+      if (!s || s.fixed || readOnly) return;
+      if (editing === id) return;
+      closeEditor();
+      closeAdd();
+      editing = id;
+      var c = cards[id];
+      c.classList.add("editing");
+      var f = buildForm("ed-" + id, { time: s.time, title: s.title, note: noteText(id, s) }, [
+        { text: "儲存", cls: "primary", submit: true },
+        { text: "取消", act: "cancel" },
+        { text: "刪除這個行程", cls: "danger", act: "delete" }
+      ]);
+      f.setAttribute("data-edit", id);
+      c.appendChild(f);
+      var target = f.querySelector(focusTime ? "input[type=time]" : "input[type=text]");
+      try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+    }
+
+    function saveEditor(f) {
+      var id = f.getAttribute("data-edit"), s = state.stops[id];
+      if (!s) return closeEditor();
+      var time = fromInput(f.querySelector("input[type=time]").value);
+      var title = f.querySelector("input[type=text]").value.trim();
+      var note = f.querySelector("textarea").value.trim();
+      if (!time) { toast("請填時間"); return; }
+      if (!title) { toast("請填行程名稱"); return; }
+      var patch = {}, before = {}, parts = [];
+      if (time !== s.time) { patch.time = time; before.time = s.time; parts.push("時間 " + s.time + " → " + time); }
+      if (title !== s.title) { patch.title = title; before.title = s.title; parts.push("名稱改成「" + title + "」"); }
+      if (note !== noteText(id, s).trim()) { patch.note = note; before.note = s.note; parts.push("更新說明"); }
+      closeEditor();
+      if (!parts.length) return;
+      write([{ id: id, patch: patch }], { stop: id, action: "edit", label: "「" + s.title + "」" + parts.join("、"), before: before, after: patch })
+        .then(function () { toast("已儲存"); });
+    }
+
+    var delArmed = null;
+    function deleteFromEditor(btn) {
+      var id = editing, s = state.stops[id];
+      if (!s) return;
+      if (delArmed !== btn) {
+        delArmed = btn;
+        btn.textContent = "再按一次確定刪除";
+        setTimeout(function () { if (delArmed === btn) { delArmed = null; btn.textContent = "刪除這個行程"; } }, 4000);
+        return;
+      }
+      delArmed = null;
+      closeEditor();
+      write([{ id: id, patch: { deleted: true } }], { stop: id, action: "delete", label: "刪除「" + s.title + "」", before: { deleted: false }, after: { deleted: true } })
+        .then(function () { toast("已刪除，可以在「最近刪除」放回"); });
+    }
+
+    /* ---------- Add ---------- */
+    var adding = null;
+    function closeAdd() {
+      if (!adding) return;
+      var f = host.querySelector("form[data-new]");
+      if (f) f.remove();
+      var b = host.querySelector('[data-add="' + adding + '"]');
+      if (b) b.hidden = false;
+      adding = null;
+    }
+    function openAdd(d) {
+      if (readOnly) return;
+      closeEditor();
+      closeAdd();
+      adding = d;
+      var ids = ordered(d);
+      var last = ids.length ? state.stops[ids[ids.length - 1]].time : "12:00";
+      var m = Math.min(mins(last) + 60, 23 * 60);
+      var f = buildForm("add-" + d, { time: Math.floor(m / 60) + ":" + pad(m % 60), title: "", note: "" }, [
+        { text: "新增", cls: "primary", submit: true },
+        { text: "取消", act: "cancel-add" }
+      ]);
+      f.setAttribute("data-new", d);
+      f.querySelector("input[type=text]").placeholder = "例如：鼓浪嶼鋼琴碼頭";
+      var b = host.querySelector('[data-add="' + d + '"]');
+      b.hidden = true;
+      b.parentNode.insertBefore(f, b);
+      f.querySelector("input[type=text]").focus();
+    }
+    function saveAdd(f) {
+      var d = f.getAttribute("data-new");
+      var time = fromInput(f.querySelector("input[type=time]").value);
+      var title = f.querySelector("input[type=text]").value.trim();
+      var note = f.querySelector("textarea").value.trim();
+      if (!time) { toast("請填時間"); return; }
+      if (!title) { toast("請填行程名稱"); return; }
+      var ids = ordered(d), m = mins(time), prev = null, next = null;
+      ids.forEach(function (id) { if (mins(state.stops[id].time) <= m) prev = id; else if (!next) next = id; });
+      if (prev && next && ids.indexOf(next) < ids.indexOf(prev)) next = ids[ids.indexOf(prev) + 1] || null;
+      var a = prev ? state.stops[prev].pos : null, b = next ? state.stops[next].pos : null;
+      var pos = a != null && b != null ? (a + b) / 2 : a != null ? a + 1000 : b != null ? b - 1000 : 1000;
+      var id = newId();
+      closeAdd();
+      write([{ id: id, set: { day: d, pos: pos, time: time, title: title, note: note, fixed: false, deleted: false, orig: false } }],
+        { stop: id, action: "add", label: "新增「" + title + "」到 " + heads[d].no, before: { deleted: true }, after: { deleted: false } })
+        .then(function () { toast("已新增「" + title + "」"); });
+    }
+
+    /* ---------- Events ---------- */
+    host.addEventListener("click", function (e) {
+      var t = e.target;
+      var open = t.closest(".btime, .btitle");
+      if (open && !open.disabled) { var c = open.closest(".card"); openEditor(c.getAttribute("data-id"), open.classList.contains("btime")); return; }
+      var addB = t.closest("[data-add]");
+      if (addB) { openAdd(addB.getAttribute("data-add")); return; }
+      var act = t.closest("[data-act]");
+      if (!act) return;
+      var a = act.getAttribute("data-act");
+      if (a === "cancel") closeEditor();
+      else if (a === "delete") deleteFromEditor(act);
+      else if (a === "cancel-add") closeAdd();
+    });
+    host.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var f = e.target;
+      if (f.hasAttribute("data-edit")) saveEditor(f);
+      else if (f.hasAttribute("data-new")) saveAdd(f);
+    });
     host.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && e.target.closest(".editor")) { closeEditor(); closeAdd(); return; }
       var g = e.target.closest && e.target.closest(".grip");
       if (!g) return;
-      var c = g.parentElement, list = c.parentElement, i = DAYS.indexOf(list.getAttribute("data-day"));
-      if (e.key === "ArrowUp" && c.previousElementSibling) list.insertBefore(c, c.previousElementSibling);
-      else if (e.key === "ArrowDown" && c.nextElementSibling) list.insertBefore(c.nextElementSibling, c);
-      else if (e.key === "ArrowLeft" && i > 0) lists[DAYS[i - 1]].appendChild(c);
-      else if (e.key === "ArrowRight" && i < DAYS.length - 1) lists[DAYS[i + 1]].insertBefore(c, lists[DAYS[i + 1]].firstChild);
+      var c = g.closest(".card"), id = c.getAttribute("data-id"), d = state.stops[id].day, i = DAYS.indexOf(d);
+      var ids = ordered(d), k = ids.indexOf(id);
+      if (e.key === "ArrowUp" && k > 0) move(id, d, ids[k - 2] || null, ids[k - 1]);
+      else if (e.key === "ArrowDown" && k < ids.length - 1) move(id, d, ids[k + 1], ids[k + 2] || null);
+      else if (e.key === "ArrowLeft" && i > 0) { var p = ordered(DAYS[i - 1]); move(id, DAYS[i - 1], p[p.length - 1] || null, null); }
+      else if (e.key === "ArrowRight" && i < DAYS.length - 1) { var q = ordered(DAYS[i + 1]); move(id, DAYS[i + 1], null, q[0] || null); }
       else return;
       e.preventDefault();
-      save();
-      g.focus();
-      announce(c);
+      setTimeout(function () { var n = cards[id] && cards[id].querySelector(".grip"); if (n) n.focus(); }, 0);
     });
-
-    /* Tap a time to change it */
-    host.addEventListener("click", function (e) {
-      var b = e.target.closest && e.target.closest("button.btime");
-      if (!b) return;
-      var c = b.parentElement, id = c.getAttribute("data-id");
-      var inp = document.createElement("input");
-      inp.type = "time";
-      inp.className = "tin";
-      inp.id = "tin-" + id;
-      inp.step = 300;
-      var m = mins(timeOf(id));
-      inp.value = pad(Math.floor(m / 60)) + ":" + pad(m % 60);
-      inp.setAttribute("aria-label", "「" + titles[id] + "」的新時間");
-      b.hidden = true;
-      c.insertBefore(inp, b.nextSibling);
-      inp.focus();
-      var done = false;
-      function finish(keep, refocus) {
-        if (done) return;
-        done = true;
-        if (keep && /^\d{2}:\d{2}$/.test(inp.value)) {
-          var t = String(+inp.value.slice(0, 2)) + ":" + inp.value.slice(3, 5);
-          if (t === orig.times[id]) delete times[id]; else times[id] = t;
-        }
-        inp.remove();
-        b.hidden = false;
-        save();
-        if (refocus) b.focus();
+    section.addEventListener("click", function (e) {
+      var u = e.target.closest("[data-undo]");
+      if (u) { undo(state.log[+u.getAttribute("data-undo")]); return; }
+      var r = e.target.closest("[data-restore]");
+      if (r) {
+        var id = r.getAttribute("data-restore"), s = state.stops[id];
+        write([{ id: id, patch: { deleted: false } }], { stop: id, action: "restore", label: "放回「" + s.title + "」", before: { deleted: true }, after: { deleted: false } })
+          .then(function () { toast("已放回「" + s.title + "」"); });
       }
-      inp.addEventListener("keydown", function (ev) {
-        if (ev.key === "Enter") { ev.preventDefault(); finish(true, true); }
-        else if (ev.key === "Escape") { ev.preventDefault(); finish(false, true); }
-      });
-      inp.addEventListener("blur", function () { finish(true, false); });
     });
+    undoBtn.addEventListener("click", function () { var g = lastUndoable(); if (g) undo(g); });
 
-    /* Reset, with an in-page confirm */
     var armed = null;
-    function disarm() {
-      clearTimeout(armed);
-      armed = null;
-      resetBtn.textContent = "還原成原本的行程";
-      resetBtn.classList.remove("armed");
-    }
+    function disarm() { clearTimeout(armed); armed = null; resetBtn.textContent = "全部還原"; resetBtn.classList.remove("armed"); }
     resetBtn.addEventListener("click", function () {
       if (!armed) {
-        resetBtn.textContent = "再按一次確定還原";
+        resetBtn.textContent = "再按一次，全部還原";
         resetBtn.classList.add("armed");
         armed = setTimeout(disarm, 4000);
         return;
       }
       disarm();
-      times = {};
-      render(orig.order);
-      save();
-      live.textContent = "已還原成原本的行程";
+      var ops = [];
+      Object.keys(state.stops).forEach(function (id) {
+        var s = state.stops[id], o = OR[id];
+        if (s.fixed) return;
+        if (o) {
+          if (s.day !== o.day || s.pos !== o.pos || s.time !== o.time || s.title !== o.title || s.note !== null || s.deleted)
+            ops.push({ id: id, patch: { day: o.day, pos: o.pos, time: o.time, title: o.title, note: null, deleted: false } });
+        } else if (!s.deleted) ops.push({ id: id, patch: { deleted: true } });
+      });
+      if (!ops.length) { toast("已經是原本的行程"); return; }
+      write(ops, { stop: "all", action: "reset", label: "全部還原成原本的行程" }).then(function () { toast("已全部還原，新增的行程在「最近刪除」"); });
     });
 
-    /* Copy the current version as plain text for LINE */
     copyBtn.addEventListener("click", function () {
-      var order = currentOrder();
-      var lines = ["廈門好吃驚" + (isChanged(order) ? "（調整後的行程）" : "")];
+      var lines = ["廈門好吃驚 行程"];
       DAYS.forEach(function (d) {
         lines.push("", "【" + heads[d].no + "　" + heads[d].date + "】");
-        order[d].forEach(function (id) { lines.push(timeOf(id) + "　" + titles[id]); });
+        ordered(d).forEach(function (id) { lines.push(state.stops[id].time + "　" + state.stops[id].title); });
       });
-      var text = lines.join("\n");
-      var label = "複製行程文字";
+      var text = lines.join("\n"), label = "複製行程文字";
       var fail = function () {
         textBox.value = text;
         textBox.hidden = false;
@@ -1025,6 +1304,150 @@ span.btime { cursor: default; color: var(--muted); }
         } else fail();
       } catch (e) { fail(); }
     });
+
+    /* ---------- Drag and drop ---------- */
+    if (typeof window.Sortable === "function") {
+      DAYS.forEach(function (d) {
+        window.Sortable.create(lists[d], {
+          group: "xm-trip", handle: ".grip", draggable: ".card", animation: reduce ? 0 : 160,
+          forceFallback: true, fallbackOnBody: true, fallbackTolerance: 3,
+          ghostClass: "is-ghost", dragClass: "is-drag",
+          scroll: true, bubbleScroll: true, scrollSensitivity: 60, scrollSpeed: 12,
+          onStart: function () { dragging = true; closeEditor(); closeAdd(); },
+          onEnd: function (e) {
+            dragging = false;
+            var item = e.item, id = item.getAttribute("data-id");
+            var prev = item.previousElementSibling, next = item.nextElementSibling;
+            if (e.from === e.to && e.oldIndex === e.newIndex) { if (renderQueued) render(); return; }
+            move(id, e.to.getAttribute("data-day"), prev ? prev.getAttribute("data-id") : null, next ? next.getAttribute("data-id") : null);
+            if (renderQueued) render();
+          }
+        });
+      });
+    }
+
+    /* ---------- Stores ---------- */
+    function LocalStore() {
+      var KEY = "xm-trip-plan-v2", data = null, onStops = null, onLog = null;
+      try { data = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+      if (!data || !data.stops) data = { stops: clone(OR), log: [] };
+      Object.keys(OR).forEach(function (id) { if (!data.stops[id]) data.stops[id] = clone(OR[id]); });
+      function emit() { if (onStops) onStops(data.stops, { live: true }); if (onLog) onLog(data.log.slice(0, 12)); }
+      return {
+        local: true,
+        start: function (a, b) { onStops = a; onLog = b; emit(); },
+        write: function (ops, log) {
+          var now = Date.now();
+          ops.forEach(function (o) {
+            var base = o.set ? {} : (data.stops[o.id] || {});
+            var next = {};
+            Object.keys(base).forEach(function (k) { next[k] = base[k]; });
+            var src = o.set || o.patch;
+            Object.keys(src).forEach(function (k) { next[k] = src[k]; });
+            next.at = now;
+            data.stops[o.id] = next;
+          });
+          if (log) {
+            var g = { id: "l" + now.toString(36) + Math.random().toString(36).slice(2, 6), before: null, after: null, at: now };
+            Object.keys(log).forEach(function (k) { g[k] = log[k]; });
+            data.log.unshift(g);
+            data.log = data.log.slice(0, 30);
+          }
+          try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+          emit();
+          return Promise.resolve();
+        }
+      };
+    }
+
+    function CloudStore() {
+      var app = window.firebase.initializeApp(CONFIG);
+      var db = window.firebase.firestore(app);
+      var base = db.collection("trips").doc("xiamen2026");
+      var TS = window.firebase.firestore.FieldValue.serverTimestamp;
+      return {
+        local: false,
+        start: function (onStops, onLog, onError) {
+          base.collection("stops").onSnapshot({ includeMetadataChanges: true }, function (snap) {
+            var out = {};
+            snap.forEach(function (doc) { out[doc.id] = doc.data({ serverTimestamps: "estimate" }); });
+            onStops(out, { live: !snap.metadata.fromCache, pending: snap.metadata.hasPendingWrites, empty: snap.empty });
+          }, onError);
+          base.collection("log").orderBy("at", "desc").limit(12).onSnapshot(function (snap) {
+            onLog(snap.docs.map(function (doc) {
+              var g = doc.data({ serverTimestamps: "estimate" });
+              g.at = atMs(g.at) || Date.now();
+              g.id = doc.id;
+              return g;
+            }));
+          }, function () {});
+        },
+        write: function (ops, log) {
+          var b = db.batch();
+          ops.forEach(function (o) {
+            var ref = base.collection("stops").doc(o.id), src = o.set || o.patch, d = { at: TS() };
+            Object.keys(src).forEach(function (k) { d[k] = src[k]; });
+            if (o.set) b.set(ref, d); else b.update(ref, d);
+          });
+          if (log) {
+            var g = { before: null, after: null, at: TS() };
+            Object.keys(log).forEach(function (k) { g[k] = log[k]; });
+            b.set(base.collection("log").doc(), g);
+          }
+          return b.commit();
+        }
+      };
+    }
+
+    function setStatus(kind) {
+      var text = {
+        local: "修改只會存在這台裝置",
+        connecting: "連線中…",
+        live: "大家一起編輯中",
+        pending: "儲存中…",
+        offline: "目前離線，修改會在連上網路後送出",
+        error: "連不上共用行程，目前只能看"
+      }[kind];
+      statusEl.textContent = text;
+      statusEl.setAttribute("data-state", kind);
+    }
+
+    function goReadOnly() {
+      readOnly = true;
+      section.classList.add("readonly");
+      closeEditor();
+      closeAdd();
+      setStatus("error");
+      hintEl.textContent = "連不上共用行程，現在只能看。在大陸用飯店或餐廳的 Wi-Fi 可能會被擋，請改用台灣門號漫遊上網再重新整理。";
+      render();
+    }
+
+    state.stops = clone(OR);
+    try {
+      store = CONFIG && window.firebase && window.firebase.firestore ? CloudStore() : null;
+    } catch (e) { store = null; }
+    if (store) {
+      setStatus("connecting");
+    } else if (CONFIG) {
+      goReadOnly();
+    } else {
+      store = LocalStore();
+      hintEl.textContent = "這個版本的修改只會存在你自己的裝置上。想和大家一起編輯，請打開 GitHub 上的網址。航班和機場報到是固定的，不能修改。";
+      setStatus("local");
+    }
+    render();
+    if (store) store.start(function (stops, meta) {
+      if (!store.local && meta.empty) { if (meta.live) goReadOnly(); return; }
+      state.stops = stops;
+      if (!store.local) setStatus(meta.pending ? "pending" : meta.live ? "live" : "offline");
+      render();
+    }, function (log) {
+      state.log = log;
+      renderLog();
+    }, function () {
+      goReadOnly();
+    });
+    setInterval(function () { if (!dragging) renderLog(); }, 60000);
   })();
 })();
 </script>
